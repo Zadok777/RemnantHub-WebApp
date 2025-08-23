@@ -3,23 +3,18 @@ import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Search } from 'lucide-react';
 import bibleBackground from '@/assets/bible-hands-background.jpg';
-
 const HeroSection = () => {
-  return (
-    <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden bg-gradient-to-b from-background to-muted">
+  return <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden bg-gradient-to-b from-background to-muted">
       {/* Faded Bible Background */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-10"
-        style={{
-          backgroundImage: `url(${bibleBackground})`,
-        }}
-      ></div>
+      <div className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-10" style={{
+      backgroundImage: `url(${bibleBackground})`
+    }}></div>
 
       {/* Content */}
       <div className="relative z-10 text-center max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Main Heading - Matching the reference image */}
         <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground mb-8 leading-tight">
-          <span className="block">They devoted themselves to the apostles'</span>
+          <span className="block text-4xl">They devoted themselves to the apostles'</span>
           <span className="block">teaching and the fellowship, to the breaking of</span>
           <span className="block">bread and the prayers.</span>
         </h1>
@@ -53,8 +48,6 @@ const HeroSection = () => {
           </Button>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default HeroSection;
