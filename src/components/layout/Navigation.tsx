@@ -28,9 +28,9 @@ const Navigation = () => {
           {/* Logo - Compact but with full text */}
           <Link to="/" className="flex items-center space-x-2 flex-shrink-0 min-w-0">
             <img 
-              src="/lovable-uploads/6c5c7043-4203-46aa-b99f-b705da559ade.png" 
+              src="/lovable-uploads/3c84f68c-03b5-4889-906e-f88709ab46b7.png" 
               alt="RemnantHub Logo" 
-              className="w-10 h-10 flex-shrink-0 mix-blend-multiply dark:mix-blend-screen rounded-lg"
+              className="w-12 h-12 flex-shrink-0 rounded-lg"
             />
             <div className="min-w-0">
               <h1 className="text-sm font-bold text-foreground leading-tight">RemnantHub</h1>
