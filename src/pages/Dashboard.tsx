@@ -16,6 +16,7 @@ import { useCommunities } from '@/hooks/useCommunities';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { Link } from 'react-router-dom';
 import { 
   User, 
   MapPin, 
@@ -364,15 +365,12 @@ const Dashboard = () => {
                   <Button 
                     className="w-full justify-start" 
                     variant="outline" 
-                    onClick={() => {
-                      toast({
-                        title: "Coming Soon!",
-                        description: "Community creation feature will be available soon.",
-                      });
-                    }}
+                    asChild
                   >
-                    <Plus className="w-4 h-4 mr-2" />
-                    Create New Community
+                    <Link to="/create-community">
+                      <Plus className="w-4 h-4 mr-2" />
+                      Create New Community
+                    </Link>
                   </Button>
                   <Button className="w-full justify-start" variant="outline" asChild>
                     <a href="/search">

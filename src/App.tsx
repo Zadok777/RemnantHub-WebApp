@@ -12,6 +12,7 @@ import Features from "./pages/Features";
 import About from "./pages/About";
 import Donate from "./pages/Donate";
 import Dashboard from "./pages/Dashboard";
+import CreateCommunity from "./pages/CreateCommunity";
 import Community from "./pages/Community";
 import Auth from "./pages/Auth";
 import PrayerRequests from "./pages/PrayerRequests";
@@ -42,6 +43,7 @@ const App = () => (
               <Route path="/about" element={<About />} />
               <Route path="/donate" element={<Donate />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/create-community" element={<CreateCommunity />} />
               <Route path="/community/:id" element={<Community />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/signin" element={<Auth />} />
