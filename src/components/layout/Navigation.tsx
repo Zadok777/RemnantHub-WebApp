@@ -23,77 +23,77 @@ const Navigation = () => {
 
   return (
     <nav className="bg-background/95 backdrop-blur-md border-b border-border sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <Link to="/" className="flex items-center space-x-3">
+      <div className="max-w-7xl mx-auto px-1 sm:px-2 lg:px-4">
+        <div className="flex justify-between items-center h-16 gap-4">
+          {/* Logo - Compact but with full text */}
+          <Link to="/" className="flex items-center space-x-2 flex-shrink-0 min-w-0">
             <img 
-              src="/lovable-uploads/6c5c7043-4203-46aa-b99f-b705da559ade.png" 
+              src="/lovable-uploads/3c84f68c-03b5-4889-906e-f88709ab46b7.png" 
               alt="RemnantHub Logo" 
-              className="w-17 h-17"
+              className="w-16 h-16 flex-shrink-0 rounded-lg"
             />
-            <div>
-              <h1 className="text-xl font-bold text-foreground">RemnantHub</h1>
-              <p className="text-xs text-muted-foreground hidden sm:block">
+            <div className="min-w-0">
+              <h1 className="text-sm font-bold text-foreground leading-tight">RemnantHub</h1>
+              <p className="text-xs text-muted-foreground hidden sm:block leading-tight">
                 Connecting Authentic Christian Communities
               </p>
             </div>
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          {/* Desktop Navigation - More compact */}
+          <div className="hidden md:flex items-center space-x-1 lg:space-x-3 flex-shrink-0">
             {navigation.map((item) => {
               const Icon = item.icon;
               return (
                 <Link
                   key={item.name}
                   to={item.href}
-                  className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  className={`flex items-center space-x-1 px-1 lg:px-2 py-1 rounded-lg text-xs lg:text-sm font-medium transition-colors whitespace-nowrap ${
                     isActive(item.href)
                       ? 'text-primary bg-primary/10'
                       : 'text-muted-foreground hover:text-foreground hover:bg-accent'
                   }`}
                 >
-                  <Icon className="w-4 h-4" />
-                  <span>{item.name}</span>
+                  <Icon className="w-3 h-3 lg:w-4 lg:h-4 flex-shrink-0" />
+                  <span className="hidden lg:inline">{item.name}</span>
                 </Link>
               );
             })}
           </div>
 
-          {/* Auth Buttons */}
-          <div className="hidden md:flex items-center space-x-4">
+          {/* Auth Buttons - More compact */}
+          <div className="hidden md:flex items-center space-x-1 flex-shrink-0">
             <ThemeToggle />
             {loading ? (
-              <div className="w-20 h-8 bg-muted rounded animate-pulse" />
+              <div className="w-12 h-8 bg-muted rounded animate-pulse" />
             ) : user ? (
               <>
-                <span className="text-sm text-muted-foreground">
-                  Welcome, {user.user_metadata?.display_name || user.email}
+                <span className="text-xs text-muted-foreground max-w-20 truncate hidden xl:block">
+                  {user.user_metadata?.display_name || user.email}
                 </span>
                 <Button variant="ghost" size="sm" asChild>
-                  <Link to="/dashboard" className="flex items-center space-x-2">
-                    <Settings className="w-4 h-4" />
-                    <span>Dashboard</span>
+                  <Link to="/dashboard" className="flex items-center space-x-1 px-1 lg:px-2">
+                    <Settings className="w-3 h-3 lg:w-4 lg:h-4" />
+                    <span className="hidden xl:inline text-xs">Dashboard</span>
                   </Link>
                 </Button>
-                <Button variant="outline" size="sm" onClick={signOut}>
-                  <LogOut className="w-4 h-4 mr-2" />
-                  Sign Out
+                <Button variant="outline" size="sm" onClick={signOut} className="px-1 lg:px-2">
+                  <LogOut className="w-3 h-3 lg:w-4 lg:h-4" />
+                  <span className="hidden xl:inline ml-1 text-xs">Sign Out</span>
                 </Button>
               </>
             ) : (
               <>
-                <Button variant="ghost" size="sm" asChild>
-                  <Link to="/auth" className="flex items-center space-x-2">
-                    <User className="w-4 h-4" />
-                    <span>Sign In</span>
+                <Button variant="ghost" size="sm" asChild className="px-1 lg:px-2">
+                  <Link to="/auth" className="flex items-center space-x-1">
+                    <User className="w-3 h-3 lg:w-4 lg:h-4" />
+                    <span className="hidden xl:inline text-xs">Sign In</span>
                   </Link>
                 </Button>
-                <Button size="sm" asChild>
-                  <Link to="/auth" className="flex items-center space-x-2">
-                    <UserPlus className="w-4 h-4" />
-                    <span>Sign Up</span>
+                <Button size="sm" asChild className="px-1 lg:px-2">
+                  <Link to="/auth" className="flex items-center space-x-1">
+                    <UserPlus className="w-3 h-3 lg:w-4 lg:h-4" />
+                    <span className="hidden xl:inline text-xs">Sign Up</span>
                   </Link>
                 </Button>
               </>
