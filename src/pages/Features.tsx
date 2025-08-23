@@ -232,7 +232,7 @@ const Features = () => {
               </Link>
             </Button>
             <Button size="lg" variant="secondary" asChild>
-              <Link to="/signup">
+              <Link to="/auth">
                 Get Started Free
               </Link>
             </Button>

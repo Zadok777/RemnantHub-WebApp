@@ -4,10 +4,11 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
-import { MapPin, Users, Clock, Star, Filter, Search as SearchIcon, Navigation } from 'lucide-react';
+import { MapPin, Users, Clock, Star, Filter, Search as SearchIcon, Navigation, Map } from 'lucide-react';
 import { mockCommunities, Community } from '@/data/mockData';
 import { Link } from 'react-router-dom';
 import { useLocation, calculateDistance } from '@/hooks/useLocation';
+import InteractiveMap from '@/components/map/InteractiveMap';
 
 const Search = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -15,6 +16,7 @@ const Search = () => {
   const [selectedTrustLevels, setSelectedTrustLevels] = useState<string[]>([]);
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
   const [selectedFeatures, setSelectedFeatures] = useState<string[]>([]);
+  const [showMap, setShowMap] = useState(false);
   const { location, getCurrentLocation, loading: locationLoading } = useLocation();
 
   // Filter and search logic
@@ -114,13 +116,38 @@ const Search = () => {
             <Button 
               onClick={getCurrentLocation}
               disabled={locationLoading}
+              variant="outline"
               className="h-12 px-8"
             >
               <Navigation className="w-4 h-4 mr-2" />
               {locationLoading ? 'Finding...' : 'Find Near Me'}
             </Button>
+            <Button 
+              onClick={() => setShowMap(!showMap)}
+              className="h-12 px-8"
+            >
+              <Map className="w-4 h-4 mr-2" />
+              {showMap ? 'Hide Map' : 'Show Map'}
+            </Button>
           </div>
         </div>
+
+        {/* Interactive Map */}
+        {showMap && (
+          <div className="mb-8">
+            <InteractiveMap 
+              communities={filteredCommunities}
+              onCommunitySelect={(community) => {
+                // Scroll to community card when clicked on map
+                const element = document.getElementById(`community-${community.id}`);
+                if (element) {
+                  element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+              }}
+              height="h-[500px]"
+            />
+          </div>
+        )}
 
         {/* Results */}
         <div className="grid lg:grid-cols-3 gap-8">
@@ -208,7 +235,11 @@ const Search = () => {
 
             <div className="space-y-6">
               {filteredCommunities.map((community) => (
-                <Card key={community.id} className="community-card hover:shadow-xl transition-all duration-300">
+                <Card 
+                  key={community.id} 
+                  id={`community-${community.id}`}
+                  className="community-card hover:shadow-xl transition-all duration-300"
+                >
                   <CardHeader>
                     <div className="flex justify-between items-start">
                       <div>
