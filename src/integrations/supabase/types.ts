@@ -14,7 +14,143 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      communities: {
+        Row: {
+          contact_info: Json | null
+          created_at: string
+          description: string | null
+          id: string
+          leader_id: string
+          location_city: string
+          location_lat: number
+          location_lng: number
+          location_state: string
+          max_capacity: number | null
+          meeting_day: string
+          meeting_time: string
+          member_count: number | null
+          name: string
+          tags: string[] | null
+          trust_level: string
+          updated_at: string
+        }
+        Insert: {
+          contact_info?: Json | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          leader_id: string
+          location_city: string
+          location_lat: number
+          location_lng: number
+          location_state: string
+          max_capacity?: number | null
+          meeting_day: string
+          meeting_time: string
+          member_count?: number | null
+          name: string
+          tags?: string[] | null
+          trust_level?: string
+          updated_at?: string
+        }
+        Update: {
+          contact_info?: Json | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          leader_id?: string
+          location_city?: string
+          location_lat?: number
+          location_lng?: number
+          location_state?: string
+          max_capacity?: number | null
+          meeting_day?: string
+          meeting_time?: string
+          member_count?: number | null
+          name?: string
+          tags?: string[] | null
+          trust_level?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      community_members: {
+        Row: {
+          community_id: string
+          id: string
+          joined_at: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          community_id: string
+          id?: string
+          joined_at?: string
+          role?: string
+          user_id: string
+        }
+        Update: {
+          community_id?: string
+          id?: string
+          joined_at?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_members_community_id_fkey"
+            columns: ["community_id"]
+            isOneToOne: false
+            referencedRelation: "communities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          display_name: string | null
+          email: string | null
+          id: string
+          location_city: string | null
+          location_lat: number | null
+          location_lng: number | null
+          location_state: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          location_city?: string | null
+          location_lat?: number | null
+          location_lng?: number | null
+          location_state?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          location_city?: string | null
+          location_lat?: number | null
+          location_lng?: number | null
+          location_state?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
