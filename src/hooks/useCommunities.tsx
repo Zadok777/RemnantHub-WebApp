@@ -173,7 +173,7 @@ export const useCommunities = () => {
           description: communityData.description || '',
           meeting_day: communityData.meeting_day || 'Sunday',
           meeting_time: communityData.meeting_time || '10:00 AM',
-          trust_level: communityData.trust_level || 'new',
+          trust_level: communityData.trust_level || 'New',
           location_city: 'Unknown',
           location_state: 'Unknown',
           location_lat: 0,
