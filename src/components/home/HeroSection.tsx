@@ -15,8 +15,8 @@ const HeroSection = () => {
         {/* Main Heading - Matching the reference image */}
         <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground mb-8 leading-tight">
           <span className="block text-4xl">They devoted themselves to the apostles'</span>
-          <span className="block">teaching and the fellowship, to the breaking of</span>
-          <span className="block">bread and the prayers.</span>
+          <span className="block text-4xl">teaching and the fellowship, to the breaking of</span>
+          <span className="block text-4xl">bread and the prayers.</span>
         </h1>
         
         {/* Scripture Reference */}
