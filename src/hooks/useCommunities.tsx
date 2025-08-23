@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -32,7 +32,7 @@ export const useCommunities = () => {
   const { toast } = useToast();
 
   // Load all communities
-  const loadCommunities = async () => {
+  const loadCommunities = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('communities')
@@ -49,10 +49,10 @@ export const useCommunities = () => {
         variant: "destructive"
       });
     }
-  };
+  }, [toast]);
 
   // Load user's communities
-  const loadUserCommunities = async (userId: string) => {
+  const loadUserCommunities = useCallback(async (userId: string) => {
     try {
       const { data, error } = await supabase
         .from('community_members')
@@ -78,7 +78,7 @@ export const useCommunities = () => {
         variant: "destructive"
       });
     }
-  };
+  }, [toast]);
 
   // Join a community
   const joinCommunity = async (communityId: string, userId: string) => {
