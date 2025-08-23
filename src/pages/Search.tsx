@@ -152,7 +152,7 @@ const Search = () => {
         {/* Results */}
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Filters Sidebar */}
-          <div className={`lg:col-span-1 ${showFilters ? 'block' : 'hidden lg:block'}`}>
+          <div className={`lg:col-span-1 ${showFilters ? 'block' : 'hidden'}`}>
             <div className="community-card sticky top-20">
               <h3 className="text-xl font-semibold mb-6">Filter Communities</h3>
               
