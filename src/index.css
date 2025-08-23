@@ -192,14 +192,14 @@ All colors MUST be HSL for proper theming.
   }
   
   .bg-about-mission {
-    background-image: url('/src/assets/about-mission.jpg');
+    background-image: url('/src/assets/about-core-values.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
   }
   
   .bg-church-welcome-light {
-    background-image: url('/src/assets/church-welcome-light.jpg');
+    background-image: url('/src/assets/home-hero-fellowship.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
