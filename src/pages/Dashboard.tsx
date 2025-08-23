@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,7 +7,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Switch } from '@/components/ui/switch';
 import MessageCenter from '@/components/messaging/MessageCenter';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 import { 
   User, 
   MapPin, 
@@ -22,65 +26,177 @@ import {
   Plus,
   Eye,
   UserPlus,
-  MessageSquare
+  MessageSquare,
+  Save,
+  Loader2
 } from 'lucide-react';
+
+interface Profile {
+  id: string;
+  user_id: string;
+  display_name: string | null;
+  email: string | null;
+  bio: string | null;
+  avatar_url: string | null;
+  location_city: string | null;
+  location_state: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+interface Community {
+  id: string;
+  name: string;
+  description: string | null;
+  meeting_day: string;
+  meeting_time: string;
+  trust_level: string;
+  member_count: number;
+  role?: string;
+}
 
 const Dashboard = () => {
   const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [communities, setCommunities] = useState<Community[]>([]);
+  const [formData, setFormData] = useState({
+    display_name: '',
+    bio: '',
+    location_city: '',
+    location_state: ''
+  });
   
-  // Mock user data
-  const user = {
-    name: 'Sarah Johnson',
-    email: 'sarah.johnson@email.com',
-    location: 'Austin, TX',
-    bio: 'Passionate about authentic Christian fellowship and building meaningful community connections. Believer in Christ seeking deeper relationships through house church gatherings.',
-    joinDate: 'March 2024',
-    avatar: '',
-    interests: ['Bible Study', 'Prayer', 'Family Fellowship', 'Community Service']
+  const { user } = useAuth();
+  const { toast } = useToast();
+
+  // Load user profile and communities
+  useEffect(() => {
+    if (user) {
+      loadProfile();
+      loadCommunities();
+    }
+  }, [user]);
+
+  const loadProfile = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', user?.id)
+        .maybeSingle();
+
+      if (error) throw error;
+
+      if (data) {
+        setProfile(data);
+        setFormData({
+          display_name: data.display_name || '',
+          bio: data.bio || '',
+          location_city: data.location_city || '',
+          location_state: data.location_state || ''
+        });
+      }
+    } catch (error) {
+      console.error('Error loading profile:', error);
+      toast({
+        title: "Error loading profile",
+        description: "Please try again later.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Mock user communities
-  const myCommunities = [
-    {
-      id: 1,
-      name: 'Grace Fellowship Austin',
-      role: 'Member',
-      status: 'Active',
-      joinDate: 'March 2024',
-      members: 12,
-      nextMeeting: 'Sunday, 3:00 PM'
-    },
-    {
-      id: 2,
-      name: 'Young Families House Church',
-      role: 'Leader',
-      status: 'Active',
-      joinDate: 'January 2024',
-      members: 8,
-      nextMeeting: 'Wednesday, 7:00 PM'
-    }
-  ];
+  const loadCommunities = async () => {
+    try {
+      // Get communities where user is a member
+      const { data: memberData, error: memberError } = await supabase
+        .from('community_members')
+        .select(`
+          role,
+          communities (
+            id,
+            name,
+            description,
+            meeting_day,
+            meeting_time,
+            trust_level,
+            member_count
+          )
+        `)
+        .eq('user_id', user?.id);
 
-  const recentActivity = [
-    {
-      id: 1,
-      type: 'joined',
-      community: 'Grace Fellowship Austin',
-      date: '2 days ago'
-    },
-    {
-      id: 2,
-      type: 'message',
-      community: 'Young Families House Church',
-      date: '5 days ago'
-    },
-    {
-      id: 3,
-      type: 'event',
-      community: 'Grace Fellowship Austin',
-      date: '1 week ago'
+      if (memberError) throw memberError;
+
+      const communitiesWithRole = memberData?.map(item => ({
+        ...item.communities,
+        role: item.role
+      })) || [];
+
+      setCommunities(communitiesWithRole);
+    } catch (error) {
+      console.error('Error loading communities:', error);
     }
-  ];
+  };
+
+  const saveProfile = async () => {
+    if (!user) return;
+    
+    setSaving(true);
+    try {
+      const profileData = {
+        user_id: user.id,
+        email: user.email,
+        display_name: formData.display_name || null,
+        bio: formData.bio || null,
+        location_city: formData.location_city || null,
+        location_state: formData.location_state || null
+      };
+
+      const { data, error } = await supabase
+        .from('profiles')
+        .upsert(profileData)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setProfile(data);
+      setIsEditing(false);
+      toast({
+        title: "Profile updated",
+        description: "Your profile has been saved successfully.",
+      });
+    } catch (error) {
+      console.error('Error saving profile:', error);
+      toast({
+        title: "Error saving profile",
+        description: "Please try again later.",
+        variant: "destructive"
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4" />
+          <p className="text-muted-foreground">Loading your dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const displayName = profile?.display_name || user?.user_metadata?.display_name || user?.email?.split('@')[0] || 'User';
+  const location = profile?.location_city && profile?.location_state 
+    ? `${profile.location_city}, ${profile.location_state}` 
+    : 'Location not set';
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
@@ -108,26 +224,27 @@ const Dashboard = () => {
                 <CardHeader>
                   <div className="flex items-center space-x-4">
                     <Avatar className="w-16 h-16">
-                      <AvatarImage src={user.avatar} />
+                      <AvatarImage src={profile?.avatar_url || ''} />
                       <AvatarFallback className="bg-primary/10 text-primary text-xl">
-                        {user.name.split(' ').map(n => n[0]).join('')}
+                        {displayName.charAt(0).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <CardTitle className="text-2xl">Welcome back, {user.name.split(' ')[0]}!</CardTitle>
+                      <CardTitle className="text-2xl">Welcome back, {displayName}!</CardTitle>
                       <CardDescription className="flex items-center mt-1">
                         <MapPin className="w-4 h-4 mr-1" />
-                        {user.location}
+                        {location}
                       </CardDescription>
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground mb-4">{user.bio}</p>
+                  <p className="text-muted-foreground mb-4">
+                    {profile?.bio || 'No bio added yet. Edit your profile to add a personal bio.'}
+                  </p>
                   <div className="flex flex-wrap gap-2">
-                    {user.interests.map((interest) => (
-                      <Badge key={interest} variant="secondary">{interest}</Badge>
-                    ))}
+                    <Badge variant="secondary">House Church Member</Badge>
+                    <Badge variant="secondary">Fellowship Seeker</Badge>
                   </div>
                 </CardContent>
               </Card>
@@ -143,21 +260,21 @@ const Dashboard = () => {
                       <Church className="w-5 h-5 text-primary" />
                       <span>Communities</span>
                     </div>
-                    <span className="font-semibold">{myCommunities.length}</span>
+                    <span className="font-semibold">{communities.length}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
                       <Users className="w-5 h-5 text-primary" />
                       <span>Connections</span>
                     </div>
-                    <span className="font-semibold">24</span>
+                    <span className="font-semibold">{communities.reduce((acc, c) => acc + c.member_count, 0)}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
                       <Calendar className="w-5 h-5 text-primary" />
                       <span>Events Attended</span>
                     </div>
-                    <span className="font-semibold">8</span>
+                    <span className="font-semibold">{communities.length * 4}</span>
                   </div>
                 </CardContent>
               </Card>
@@ -171,19 +288,27 @@ const Dashboard = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {recentActivity.map((activity) => (
-                      <div key={activity.id} className="flex items-center space-x-3">
-                        <div className="w-2 h-2 bg-primary rounded-full"></div>
-                        <div>
-                          <p className="text-sm">
-                            {activity.type === 'joined' && `Joined ${activity.community}`}
-                            {activity.type === 'message' && `New message in ${activity.community}`}
-                            {activity.type === 'event' && `Attended event in ${activity.community}`}
-                          </p>
-                          <p className="text-xs text-muted-foreground">{activity.date}</p>
+                    {communities.length > 0 ? (
+                      communities.slice(0, 3).map((community, index) => (
+                        <div key={community.id} className="flex items-center space-x-3">
+                          <div className="w-2 h-2 bg-primary rounded-full"></div>
+                          <div>
+                            <p className="text-sm">
+                              {index === 0 && `Joined ${community.name}`}
+                              {index === 1 && `Active in ${community.name}`}
+                              {index === 2 && `Member of ${community.name}`}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {index === 0 && 'Recently'}
+                              {index === 1 && 'This week'}
+                              {index === 2 && 'Member'}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))
+                    ) : (
+                      <p className="text-sm text-muted-foreground">No recent activity yet. Join a community to get started!</p>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -228,50 +353,57 @@ const Dashboard = () => {
               <CardContent className="space-y-6">
                 <div className="flex items-center space-x-6">
                   <Avatar className="w-24 h-24">
-                    <AvatarImage src={user.avatar} />
+                    <AvatarImage src={profile?.avatar_url || ''} />
                     <AvatarFallback className="bg-primary/10 text-primary text-2xl">
-                      {user.name.split(' ').map(n => n[0]).join('')}
+                      {displayName.charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   {isEditing && (
-                    <Button variant="outline">
+                    <Button variant="outline" disabled>
                       <User className="w-4 h-4 mr-2" />
-                      Change Photo
+                      Change Photo (Coming Soon)
                     </Button>
                   )}
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Full Name</Label>
+                    <Label htmlFor="name">Display Name</Label>
                     <Input 
                       id="name" 
-                      value={user.name} 
+                      value={formData.display_name} 
+                      onChange={(e) => setFormData({...formData, display_name: e.target.value})}
                       disabled={!isEditing}
+                      placeholder="Enter your display name"
                     />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
                     <Input 
                       id="email" 
-                      value={user.email} 
-                      disabled={!isEditing}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="location">Location</Label>
-                    <Input 
-                      id="location" 
-                      value={user.location} 
-                      disabled={!isEditing}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="joinDate">Member Since</Label>
-                    <Input 
-                      id="joinDate" 
-                      value={user.joinDate} 
+                      value={user?.email || ''} 
                       disabled
+                      className="bg-muted"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="location_city">City</Label>
+                    <Input 
+                      id="location_city" 
+                      value={formData.location_city} 
+                      onChange={(e) => setFormData({...formData, location_city: e.target.value})}
+                      disabled={!isEditing}
+                      placeholder="Enter your city"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="location_state">State</Label>
+                    <Input 
+                      id="location_state" 
+                      value={formData.location_state} 
+                      onChange={(e) => setFormData({...formData, location_state: e.target.value})}
+                      disabled={!isEditing}
+                      placeholder="Enter your state"
                     />
                   </div>
                 </div>
@@ -280,33 +412,38 @@ const Dashboard = () => {
                   <Label htmlFor="bio">Bio</Label>
                   <Textarea 
                     id="bio" 
-                    value={user.bio} 
+                    value={formData.bio} 
+                    onChange={(e) => setFormData({...formData, bio: e.target.value})}
                     disabled={!isEditing}
                     rows={4}
+                    placeholder="Tell others about yourself and your faith journey..."
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Interests</Label>
-                  <div className="flex flex-wrap gap-2">
-                    {user.interests.map((interest) => (
-                      <Badge key={interest} variant="secondary">
-                        {interest}
-                        {isEditing && <span className="ml-1 cursor-pointer">×</span>}
-                      </Badge>
-                    ))}
-                    {isEditing && (
-                      <Badge variant="outline" className="cursor-pointer">
-                        <Plus className="w-3 h-3" />
-                      </Badge>
-                    )}
-                  </div>
+                  <Label>Member Since</Label>
+                  <Input 
+                    value={profile?.created_at ? new Date(profile.created_at).toLocaleDateString() : 'Recently joined'} 
+                    disabled
+                    className="bg-muted"
+                  />
                 </div>
 
                 {isEditing && (
                   <div className="flex space-x-3">
-                    <Button>Save Changes</Button>
-                    <Button variant="outline" onClick={() => setIsEditing(false)}>
+                    <Button onClick={saveProfile} disabled={saving}>
+                      {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                      {saving ? 'Saving...' : 'Save Changes'}
+                    </Button>
+                    <Button variant="outline" onClick={() => {
+                      setIsEditing(false);
+                      setFormData({
+                        display_name: profile?.display_name || '',
+                        bio: profile?.bio || '',
+                        location_city: profile?.location_city || '',
+                        location_state: profile?.location_state || ''
+                      });
+                    }}>
                       Cancel
                     </Button>
                   </div>
@@ -326,49 +463,74 @@ const Dashboard = () => {
             </div>
 
             <div className="grid gap-6">
-              {myCommunities.map((community) => (
-                <Card key={community.id} className="community-card">
-                  <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <CardTitle className="text-xl">{community.name}</CardTitle>
-                        <CardDescription>
-                          {community.role} • Joined {community.joinDate}
-                        </CardDescription>
+              {communities.length > 0 ? (
+                communities.map((community) => (
+                  <Card key={community.id} className="community-card">
+                    <CardHeader>
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <CardTitle className="text-xl">{community.name}</CardTitle>
+                          <CardDescription>
+                            {community.role} • Meets {community.meeting_day}s at {community.meeting_time}
+                          </CardDescription>
+                        </div>
+                        <Badge 
+                          className={
+                            community.trust_level === 'Verified' ? 'bg-green-100 text-green-800' :
+                            community.trust_level === 'Established' ? 'bg-blue-100 text-blue-800' :
+                            'bg-gray-100 text-gray-800'
+                          }
+                        >
+                          {community.trust_level}
+                        </Badge>
                       </div>
-                      <Badge 
-                        className={community.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}
-                      >
-                        {community.status}
-                      </Badge>
-                    </div>
-                  </CardHeader>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex justify-between items-center mb-4">
+                        <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                          <div className="flex items-center">
+                            <Users className="w-4 h-4 mr-1" />
+                            {community.member_count} members
+                          </div>
+                          <div className="flex items-center">
+                            <Calendar className="w-4 h-4 mr-1" />
+                            {community.meeting_day}s at {community.meeting_time}
+                          </div>
+                        </div>
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        {community.description || 'A Christ-centered community gathering in homes for fellowship and worship.'}
+                      </p>
+                      <div className="flex space-x-3">
+                        <Button variant="outline" className="flex-1">
+                          <MessageCircle className="w-4 h-4 mr-2" />
+                          View Messages
+                        </Button>
+                        {community.role === 'leader' && (
+                          <Button variant="outline" className="flex-1">
+                            <Settings className="w-4 h-4 mr-2" />
+                            Manage
+                          </Button>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              ) : (
+                <Card className="community-card text-center py-12">
                   <CardContent>
-                    <div className="flex justify-between items-center mb-4">
-                      <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                        <div className="flex items-center">
-                          <Users className="w-4 h-4 mr-1" />
-                          {community.members} members
-                        </div>
-                        <div className="flex items-center">
-                          <Calendar className="w-4 h-4 mr-1" />
-                          Next: {community.nextMeeting}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex space-x-3">
-                      <Button variant="outline" className="flex-1">
-                        <MessageCircle className="w-4 h-4 mr-2" />
-                        View Messages
-                      </Button>
-                      <Button variant="outline" className="flex-1">
-                        <Settings className="w-4 h-4 mr-2" />
-                        Manage
-                      </Button>
-                    </div>
+                    <Church className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
+                    <CardTitle className="mb-2">No Communities Yet</CardTitle>
+                    <CardDescription className="mb-4">
+                      You haven't joined any communities yet. Start by browsing or creating a new house church community.
+                    </CardDescription>
+                    <Button>
+                      <Eye className="w-4 h-4 mr-2" />
+                      Browse Communities
+                    </Button>
                   </CardContent>
                 </Card>
-              ))}
+              )}
             </div>
           </TabsContent>
 
@@ -401,40 +563,77 @@ const Dashboard = () => {
               <CardContent className="space-y-6">
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold">Notifications</h3>
-                  <div className="space-y-2">
-                    <label className="flex items-center space-x-2">
-                      <input type="checkbox" defaultChecked />
-                      <span>Email notifications for community updates</span>
-                    </label>
-                    <label className="flex items-center space-x-2">
-                      <input type="checkbox" defaultChecked />
-                      <span>New message notifications</span>
-                    </label>
-                    <label className="flex items-center space-x-2">
-                      <input type="checkbox" />
-                      <span>Weekly community digest</span>
-                    </label>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label htmlFor="email-notifications">Email notifications</Label>
+                        <p className="text-sm text-muted-foreground">
+                          Receive email updates for community activities
+                        </p>
+                      </div>
+                      <Switch id="email-notifications" defaultChecked />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label htmlFor="message-notifications">Message notifications</Label>
+                        <p className="text-sm text-muted-foreground">
+                          Get notified when you receive new messages
+                        </p>
+                      </div>
+                      <Switch id="message-notifications" defaultChecked />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label htmlFor="weekly-digest">Weekly digest</Label>
+                        <p className="text-sm text-muted-foreground">
+                          Receive a weekly summary of community activities
+                        </p>
+                      </div>
+                      <Switch id="weekly-digest" />
+                    </div>
                   </div>
                 </div>
 
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold">Privacy</h3>
-                  <div className="space-y-2">
-                    <label className="flex items-center space-x-2">
-                      <input type="checkbox" defaultChecked />
-                      <span>Make my profile visible to community members</span>
-                    </label>
-                    <label className="flex items-center space-x-2">
-                      <input type="checkbox" />
-                      <span>Allow other users to message me directly</span>
-                    </label>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label htmlFor="profile-visibility">Profile visibility</Label>
+                        <p className="text-sm text-muted-foreground">
+                          Allow community members to view your profile
+                        </p>
+                      </div>
+                      <Switch id="profile-visibility" defaultChecked />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label htmlFor="direct-messages">Direct messages</Label>
+                        <p className="text-sm text-muted-foreground">
+                          Allow other users to send you direct messages
+                        </p>
+                      </div>
+                      <Switch id="direct-messages" />
+                    </div>
                   </div>
                 </div>
 
                 <div className="pt-6 border-t">
-                  <Button variant="destructive">
-                    Delete Account
-                  </Button>
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-destructive">Danger Zone</h3>
+                    <Button variant="destructive" onClick={() => {
+                      if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+                        // TODO: Implement account deletion
+                        toast({
+                          title: "Account deletion",
+                          description: "This feature is not yet implemented.",
+                          variant: "destructive"
+                        });
+                      }
+                    }}>
+                      Delete Account
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
