@@ -34,6 +34,8 @@ const App = () => (
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/community/:id" element={<Community />} />
               <Route path="/auth" element={<Auth />} />
+              <Route path="/signin" element={<Auth />} />
+              <Route path="/signup" element={<Auth />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Layout>
