@@ -1,15 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
 import { MapPin, Users, Clock, Star, Filter, Search as SearchIcon } from 'lucide-react';
-import { mockCommunities } from '@/data/mockData';
+import { mockCommunities, Community } from '@/data/mockData';
 import { Link } from 'react-router-dom';
 
 const Search = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+  const [selectedTrustLevels, setSelectedTrustLevels] = useState<string[]>([]);
+  const [selectedDays, setSelectedDays] = useState<string[]>([]);
+  const [selectedFeatures, setSelectedFeatures] = useState<string[]>([]);
+
+  // Filter and search logic
+  const filteredCommunities = useMemo(() => {
+    return mockCommunities.filter(community => {
+      // Search term filter
+      const matchesSearch = searchTerm === '' || 
+        community.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        community.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        community.location.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        community.location.state.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        community.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+
+      // Trust level filter
+      const matchesTrustLevel = selectedTrustLevels.length === 0 || 
+        selectedTrustLevels.includes(community.trustLevel);
+
+      // Meeting day filter
+      const matchesDay = selectedDays.length === 0 || 
+        selectedDays.includes(community.meetingDay);
+
+      // Features filter
+      const matchesFeatures = selectedFeatures.length === 0 || 
+        selectedFeatures.some(feature => community.tags.includes(feature));
+
+      return matchesSearch && matchesTrustLevel && matchesDay && matchesFeatures;
+    });
+  }, [searchTerm, selectedTrustLevels, selectedDays, selectedFeatures]);
 
   const getTrustLevelColor = (level: string) => {
     switch (level) {
@@ -18,6 +49,30 @@ const Search = () => {
       case 'Verified': return 'bg-primary/10 text-primary';
       case 'Endorsed': return 'bg-purple-100 text-purple-800';
       default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const handleTrustLevelChange = (level: string, checked: boolean) => {
+    if (checked) {
+      setSelectedTrustLevels(prev => [...prev, level]);
+    } else {
+      setSelectedTrustLevels(prev => prev.filter(l => l !== level));
+    }
+  };
+
+  const handleDayChange = (day: string, checked: boolean) => {
+    if (checked) {
+      setSelectedDays(prev => [...prev, day]);
+    } else {
+      setSelectedDays(prev => prev.filter(d => d !== day));
+    }
+  };
+
+  const handleFeatureChange = (feature: string, checked: boolean) => {
+    if (checked) {
+      setSelectedFeatures(prev => [...prev, feature]);
+    } else {
+      setSelectedFeatures(prev => prev.filter(f => f !== feature));
     }
   };
 
@@ -68,15 +123,21 @@ const Search = () => {
             <div className="community-card sticky top-20">
               <h3 className="text-xl font-semibold mb-6">Filter Communities</h3>
               
-              <div className="space-y-6">
+                  <div className="space-y-6">
                 <div>
                   <h4 className="font-medium mb-3">Trust Level</h4>
                   <div className="space-y-2">
                     {['New', 'Established', 'Verified', 'Endorsed'].map((level) => (
-                      <label key={level} className="flex items-center space-x-2">
-                        <input type="checkbox" className="rounded" />
-                        <Badge className={getTrustLevelColor(level)}>{level}</Badge>
-                      </label>
+                      <div key={level} className="flex items-center space-x-2">
+                        <Checkbox 
+                          id={`trust-${level}`}
+                          checked={selectedTrustLevels.includes(level)}
+                          onCheckedChange={(checked) => handleTrustLevelChange(level, checked as boolean)}
+                        />
+                        <label htmlFor={`trust-${level}`} className="cursor-pointer">
+                          <Badge className={getTrustLevelColor(level)}>{level}</Badge>
+                        </label>
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -85,10 +146,14 @@ const Search = () => {
                   <h4 className="font-medium mb-3">Meeting Day</h4>
                   <div className="space-y-2">
                     {['Sunday', 'Wednesday', 'Saturday'].map((day) => (
-                      <label key={day} className="flex items-center space-x-2">
-                        <input type="checkbox" className="rounded" />
-                        <span className="text-sm">{day}</span>
-                      </label>
+                      <div key={day} className="flex items-center space-x-2">
+                        <Checkbox 
+                          id={`day-${day}`}
+                          checked={selectedDays.includes(day)}
+                          onCheckedChange={(checked) => handleDayChange(day, checked as boolean)}
+                        />
+                        <label htmlFor={`day-${day}`} className="text-sm cursor-pointer">{day}</label>
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -97,10 +162,14 @@ const Search = () => {
                   <h4 className="font-medium mb-3">Community Features</h4>
                   <div className="space-y-2">
                     {['Family-friendly', 'Bible Study', 'Contemporary Worship', 'Traditional Worship'].map((feature) => (
-                      <label key={feature} className="flex items-center space-x-2">
-                        <input type="checkbox" className="rounded" />
-                        <span className="text-sm">{feature}</span>
-                      </label>
+                      <div key={feature} className="flex items-center space-x-2">
+                        <Checkbox 
+                          id={`feature-${feature}`}
+                          checked={selectedFeatures.includes(feature)}
+                          onCheckedChange={(checked) => handleFeatureChange(feature, checked as boolean)}
+                        />
+                        <label htmlFor={`feature-${feature}`} className="text-sm cursor-pointer">{feature}</label>
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -112,12 +181,26 @@ const Search = () => {
           <div className="lg:col-span-2">
             <div className="flex justify-between items-center mb-6">
               <p className="text-muted-foreground">
-                Found {mockCommunities.length} communities in Austin, TX
+                Found {filteredCommunities.length} communities in Austin, TX
               </p>
+              {(selectedTrustLevels.length > 0 || selectedDays.length > 0 || selectedFeatures.length > 0 || searchTerm) && (
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => {
+                    setSearchTerm('');
+                    setSelectedTrustLevels([]);
+                    setSelectedDays([]);
+                    setSelectedFeatures([]);
+                  }}
+                >
+                  Clear Filters
+                </Button>
+              )}
             </div>
 
             <div className="space-y-6">
-              {mockCommunities.map((community) => (
+              {filteredCommunities.map((community) => (
                 <Card key={community.id} className="community-card hover:shadow-xl transition-all duration-300">
                   <CardHeader>
                     <div className="flex justify-between items-start">
