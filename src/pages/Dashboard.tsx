@@ -85,15 +85,26 @@ const Dashboard = () => {
   }, [user, loadUserCommunities]);
 
   const loadProfile = async () => {
+    if (!user?.id) {
+      console.log('No user ID available for profile loading');
+      setLoading(false);
+      return;
+    }
+
     try {
+      console.log('Loading profile for user:', user.id);
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
-        .eq('user_id', user?.id)
+        .eq('user_id', user.id)
         .maybeSingle();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error loading profile:', error);
+        throw error;
+      }
 
+      console.log('Profile data loaded:', data);
       if (data) {
         setProfile(data);
         setFormData({
@@ -101,6 +112,14 @@ const Dashboard = () => {
           bio: data.bio || '',
           location_city: data.location_city || '',
           location_state: data.location_state || ''
+        });
+      } else {
+        console.log('No profile found for user, initializing empty form');
+        setFormData({
+          display_name: '',
+          bio: '',
+          location_city: '',
+          location_state: ''
         });
       }
     } catch (error) {
