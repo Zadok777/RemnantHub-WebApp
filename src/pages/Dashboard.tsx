@@ -122,6 +122,8 @@ const Dashboard = () => {
     setSaving(true);
     try {
       const profileData = {
+        user_id: user.id,
+        email: user.email,
         display_name: formData.display_name || null,
         bio: formData.bio || null,
         location_city: formData.location_city || null,
@@ -129,11 +131,13 @@ const Dashboard = () => {
         updated_at: new Date().toISOString()
       };
 
-      // Use UPDATE instead of UPSERT since profile already exists
+      // Use UPSERT to create profile if it doesn't exist or update if it does
       const { data, error } = await supabase
         .from('profiles')
-        .update(profileData)
-        .eq('user_id', user.id)
+        .upsert(profileData, { 
+          onConflict: 'user_id',
+          ignoreDuplicates: false 
+        })
         .select()
         .single();
 
