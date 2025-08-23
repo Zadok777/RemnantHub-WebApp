@@ -20,6 +20,9 @@ const Footer = () => {
               <Link to="/search" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                 Find Communities
               </Link>
+              <Link to="/prayers" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                Prayer Requests
+              </Link>
               <Link to="/features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                 Features
               </Link>

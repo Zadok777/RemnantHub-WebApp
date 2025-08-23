@@ -14,6 +14,7 @@ import Donate from "./pages/Donate";
 import Dashboard from "./pages/Dashboard";
 import Community from "./pages/Community";
 import Auth from "./pages/Auth";
+import PrayerRequests from "./pages/PrayerRequests";
 import FAQ from "./pages/FAQ";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
@@ -44,6 +45,7 @@ const App = () => (
               <Route path="/auth" element={<Auth />} />
               <Route path="/signin" element={<Auth />} />
               <Route path="/signup" element={<Auth />} />
+              <Route path="/prayers" element={<PrayerRequests />} />
               <Route path="/faq" element={<FAQ />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />
               <Route path="/terms" element={<TermsOfService />} />
