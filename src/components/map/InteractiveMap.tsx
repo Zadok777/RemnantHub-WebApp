@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, Navigation, Settings } from 'lucide-react';
 import { useLocation } from '@/hooks/useLocation';
+import { supabase } from '@/integrations/supabase/client';
 import { Community } from '@/data/mockData';
 
 interface InteractiveMapProps {
@@ -23,8 +24,36 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const [mapboxToken, setMapboxToken] = useState('');
+  const [tokenLoading, setTokenLoading] = useState(true);
+  const [tokenError, setTokenError] = useState('');
   const [selectedCommunity, setSelectedCommunity] = useState<Community | null>(null);
   const { location, getCurrentLocation, loading: locationLoading } = useLocation();
+
+  // Fetch Mapbox token on component mount
+  useEffect(() => {
+    const fetchMapboxToken = async () => {
+      try {
+        setTokenLoading(true);
+        const { data, error } = await supabase.functions.invoke('get-mapbox-token');
+        
+        if (error) throw error;
+        
+        if (data?.token) {
+          setMapboxToken(data.token);
+          setTokenError('');
+        } else {
+          throw new Error('No token received');
+        }
+      } catch (error) {
+        console.error('Error fetching Mapbox token:', error);
+        setTokenError('Failed to load map configuration. Please try again later.');
+      } finally {
+        setTokenLoading(false);
+      }
+    };
+
+    fetchMapboxToken();
+  }, []);
 
   useEffect(() => {
     if (!mapContainer.current || !mapboxToken) return;
@@ -102,44 +131,34 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
     };
   }, [mapboxToken, communities, location, onCommunitySelect]);
 
-  if (!mapboxToken) {
+  if (tokenLoading) {
+    return (
+      <Card className={`${height} flex items-center justify-center`}>
+        <CardContent className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading interactive map...</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (tokenError) {
     return (
       <Card className={`${height} flex items-center justify-center`}>
         <CardContent className="text-center max-w-md">
           <CardHeader>
-            <CardTitle className="flex items-center justify-center mb-4">
+            <CardTitle className="flex items-center justify-center mb-4 text-destructive">
               <MapPin className="w-6 h-6 mr-2" />
-              Interactive Map Setup
+              Map Unavailable
             </CardTitle>
           </CardHeader>
-          <p className="text-muted-foreground mb-4">
-            To use the interactive map, please enter your Mapbox public token. 
-            You can get one for free at{' '}
-            <a 
-              href="https://account.mapbox.com/access-tokens/" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-primary hover:underline"
-            >
-              mapbox.com
-            </a>
-          </p>
-          <div className="space-y-3">
-            <Input
-              placeholder="pk.eyJ1IjoiY..."
-              value={mapboxToken}
-              onChange={(e) => setMapboxToken(e.target.value)}
-              className="font-mono text-sm"
-            />
-            <Button 
-              onClick={() => setMapboxToken(mapboxToken)}
-              disabled={!mapboxToken.startsWith('pk.')}
-              className="w-full"
-            >
-              <Settings className="w-4 h-4 mr-2" />
-              Initialize Map
-            </Button>
-          </div>
+          <p className="text-muted-foreground mb-4">{tokenError}</p>
+          <Button 
+            onClick={() => window.location.reload()}
+            variant="outline"
+          >
+            Try Again
+          </Button>
         </CardContent>
       </Card>
     );
