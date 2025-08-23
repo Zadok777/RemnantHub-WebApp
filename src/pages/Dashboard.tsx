@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Switch } from '@/components/ui/switch';
 import MessageCenter from '@/components/messaging/MessageCenter';
+import { SettingsManager } from '@/components/settings/SettingsManager';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -156,9 +157,13 @@ const Dashboard = () => {
         location_state: formData.location_state || null
       };
 
+      // Use upsert with onConflict to handle existing profiles
       const { data, error } = await supabase
         .from('profiles')
-        .upsert(profileData)
+        .upsert(profileData, { 
+          onConflict: 'user_id',
+          ignoreDuplicates: false 
+        })
         .select()
         .single();
 
@@ -170,11 +175,11 @@ const Dashboard = () => {
         title: "Profile updated",
         description: "Your profile has been saved successfully.",
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving profile:', error);
       toast({
         title: "Error saving profile",
-        description: "Please try again later.",
+        description: error.message || "Please try again later.",
         variant: "destructive"
       });
     } finally {
@@ -318,17 +323,21 @@ const Dashboard = () => {
                   <CardTitle>Quick Actions</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  <Button className="w-full justify-start" variant="outline">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Create New Community
+                  <Button className="w-full justify-start" variant="outline" asChild>
+                    <a href="/search">
+                      <Plus className="w-4 h-4 mr-2" />
+                      Create New Community
+                    </a>
                   </Button>
-                  <Button className="w-full justify-start" variant="outline">
-                    <Eye className="w-4 h-4 mr-2" />
-                    Browse Communities
+                  <Button className="w-full justify-start" variant="outline" asChild>
+                    <a href="/search">
+                      <Eye className="w-4 h-4 mr-2" />
+                      Browse Communities
+                    </a>
                   </Button>
-                  <Button className="w-full justify-start" variant="outline">
+                  <Button className="w-full justify-start" variant="outline" disabled>
                     <UserPlus className="w-4 h-4 mr-2" />
-                    Invite Friends
+                    Invite Friends (Coming Soon)
                   </Button>
                 </CardContent>
               </Card>
@@ -456,9 +465,11 @@ const Dashboard = () => {
           <TabsContent value="communities" className="space-y-6">
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-bold">My Communities</h2>
-              <Button>
-                <Plus className="w-4 h-4 mr-2" />
-                Join New Community
+              <Button asChild>
+                <a href="/search">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Join New Community
+                </a>
               </Button>
             </div>
 
@@ -524,9 +535,11 @@ const Dashboard = () => {
                     <CardDescription className="mb-4">
                       You haven't joined any communities yet. Start by browsing or creating a new house church community.
                     </CardDescription>
-                    <Button>
-                      <Eye className="w-4 h-4 mr-2" />
-                      Browse Communities
+                    <Button asChild>
+                      <a href="/search">
+                        <Eye className="w-4 h-4 mr-2" />
+                        Browse Communities
+                      </a>
                     </Button>
                   </CardContent>
                 </Card>
@@ -544,7 +557,10 @@ const Dashboard = () => {
                     Connect with community leaders and members
                   </p>
                 </div>
-                <Button>
+                <Button onClick={() => {
+                  const messagesTab = document.querySelector('[data-state="inactive"][value="messages"]') as HTMLElement;
+                  if (messagesTab) messagesTab.click();
+                }}>
                   <MessageSquare className="w-4 h-4 mr-2" />
                   New Message
                 </Button>
@@ -560,70 +576,18 @@ const Dashboard = () => {
                 <CardTitle>Account Settings</CardTitle>
                 <CardDescription>Manage your account preferences and privacy settings</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold">Notifications</h3>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-0.5">
-                        <Label htmlFor="email-notifications">Email notifications</Label>
-                        <p className="text-sm text-muted-foreground">
-                          Receive email updates for community activities
-                        </p>
-                      </div>
-                      <Switch id="email-notifications" defaultChecked />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-0.5">
-                        <Label htmlFor="message-notifications">Message notifications</Label>
-                        <p className="text-sm text-muted-foreground">
-                          Get notified when you receive new messages
-                        </p>
-                      </div>
-                      <Switch id="message-notifications" defaultChecked />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-0.5">
-                        <Label htmlFor="weekly-digest">Weekly digest</Label>
-                        <p className="text-sm text-muted-foreground">
-                          Receive a weekly summary of community activities
-                        </p>
-                      </div>
-                      <Switch id="weekly-digest" />
-                    </div>
-                  </div>
-                </div>
+              <CardContent>
+                <SettingsManager 
+                  onSettingsChange={(settings) => {
+                    console.log('Settings updated:', settings);
+                  }}
+                />
 
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold">Privacy</h3>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-0.5">
-                        <Label htmlFor="profile-visibility">Profile visibility</Label>
-                        <p className="text-sm text-muted-foreground">
-                          Allow community members to view your profile
-                        </p>
-                      </div>
-                      <Switch id="profile-visibility" defaultChecked />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-0.5">
-                        <Label htmlFor="direct-messages">Direct messages</Label>
-                        <p className="text-sm text-muted-foreground">
-                          Allow other users to send you direct messages
-                        </p>
-                      </div>
-                      <Switch id="direct-messages" />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-6 border-t">
+                <div className="pt-6 border-t mt-6">
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-destructive">Danger Zone</h3>
                     <Button variant="destructive" onClick={() => {
                       if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
-                        // TODO: Implement account deletion
                         toast({
                           title: "Account deletion",
                           description: "This feature is not yet implemented.",

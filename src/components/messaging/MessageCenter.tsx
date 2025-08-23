@@ -50,7 +50,7 @@ const MessageCenter = () => {
   };
 
   return (
-    <div className="h-[calc(100vh-200px)] bg-background rounded-lg border overflow-hidden">
+    <div className="h-[600px] bg-background rounded-lg border overflow-hidden">
       <Tabs defaultValue="conversations" className="h-full flex flex-col">
         <div className="border-b p-4">
           <TabsList className="grid w-full grid-cols-3">
@@ -60,10 +60,10 @@ const MessageCenter = () => {
           </TabsList>
         </div>
 
-        <div className="flex-1 flex overflow-hidden">
-          <TabsContent value="conversations" className="flex-1 flex m-0">
+        <div className="flex-1 flex overflow-hidden min-h-0">
+          <TabsContent value="conversations" className="flex-1 flex m-0 h-full">
             {/* Conversations List */}
-            <div className="w-1/3 border-r flex flex-col">
+            <div className="w-1/3 border-r flex flex-col min-h-0">
               <div className="p-4 border-b">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
@@ -125,7 +125,7 @@ const MessageCenter = () => {
             </div>
 
             {/* Message View */}
-            <div className="flex-1 flex flex-col">
+            <div className="flex-1 flex flex-col min-h-0">
               {selectedConversation ? (
                 <>
                   {/* Header */}
@@ -150,7 +150,7 @@ const MessageCenter = () => {
                   </div>
 
                   {/* Messages */}
-                  <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                  <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0">
                     {conversations[selectedConversation]?.map((message) => (
                       <div
                         key={message.id}
@@ -180,14 +180,14 @@ const MessageCenter = () => {
                   </div>
 
                   {/* Message Input */}
-                  <div className="p-4 border-t">
+                  <div className="p-4 border-t flex-shrink-0">
                     <div className="flex space-x-2">
                       <Textarea
                         placeholder="Type your message..."
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
-                        className="resize-none"
-                        rows={2}
+                        className="resize-none flex-1"
+                        rows={1}
                         onKeyDown={(e) => {
                           if (e.key === 'Enter' && !e.shiftKey) {
                             e.preventDefault();
@@ -195,7 +195,7 @@ const MessageCenter = () => {
                           }
                         }}
                       />
-                      <Button onClick={handleSendMessage} className="self-end">
+                      <Button onClick={handleSendMessage} size="sm" className="px-3">
                         <Send className="w-4 h-4" />
                       </Button>
                     </div>
@@ -214,7 +214,7 @@ const MessageCenter = () => {
             </div>
           </TabsContent>
 
-          <TabsContent value="communities" className="flex-1 m-0 p-4">
+          <TabsContent value="communities" className="flex-1 m-0 p-4 overflow-y-auto">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold">Community Messages</h3>
@@ -250,8 +250,8 @@ const MessageCenter = () => {
             </div>
           </TabsContent>
 
-          <TabsContent value="compose" className="flex-1 m-0 p-4">
-            <Card className="h-full">
+          <TabsContent value="compose" className="flex-1 m-0 p-4 overflow-y-auto">
+            <Card className="max-h-full">
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <Plus className="w-5 h-5 mr-2" />
@@ -272,11 +272,11 @@ const MessageCenter = () => {
                   <Input placeholder="Message subject..." className="mt-1" />
                 </div>
                 
-                <div className="flex-1">
+                <div>
                   <label className="text-sm font-medium">Message</label>
                   <Textarea 
                     placeholder="Write your message..."
-                    className="mt-1 min-h-[200px] resize-none"
+                    className="mt-1 h-32 resize-none"
                   />
                 </div>
                 
