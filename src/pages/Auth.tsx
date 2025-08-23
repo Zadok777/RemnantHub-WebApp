@@ -18,6 +18,7 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [activeTab, setActiveTab] = useState('signin');
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -122,6 +123,11 @@ const Auth = () => {
 
       if (data.user && !data.user.email_confirmed_at) {
         setSuccess('Please check your email and click the confirmation link to complete your registration.');
+        // Switch to sign in tab after showing success message
+        setTimeout(() => {
+          setActiveTab('signin');
+          setSuccess('');
+        }, 3000);
       } else if (data.user) {
         toast({
           title: "Account created!",
@@ -166,7 +172,7 @@ const Auth = () => {
           </CardHeader>
           
           <CardContent>
-            <Tabs defaultValue="signin" className="w-full">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="signin">Sign In</TabsTrigger>
                 <TabsTrigger value="signup">Sign Up</TabsTrigger>
