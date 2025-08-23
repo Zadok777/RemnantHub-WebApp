@@ -58,6 +58,7 @@ interface Community {
 
 const Dashboard = () => {
   const [isEditing, setIsEditing] = useState(false);
+  const [activeTab, setActiveTab] = useState('overview');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -212,7 +213,7 @@ const Dashboard = () => {
           <p className="text-muted-foreground">Manage your profile and community connections</p>
         </div>
 
-        <Tabs defaultValue="overview" className="space-y-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="profile">Profile</TabsTrigger>
@@ -558,15 +559,19 @@ const Dashboard = () => {
                   </p>
                 </div>
                 <Button onClick={() => {
-                  const messagesTab = document.querySelector('[data-state="inactive"][value="messages"]') as HTMLElement;
-                  if (messagesTab) messagesTab.click();
+                  setActiveTab('messages');
+                  // Small delay to ensure tab is rendered, then switch to compose
+                  setTimeout(() => {
+                    const composeTab = document.querySelector('[value="compose"]') as HTMLElement;
+                    if (composeTab) composeTab.click();
+                  }, 100);
                 }}>
                   <MessageSquare className="w-4 h-4 mr-2" />
                   New Message
                 </Button>
               </div>
               
-              <MessageCenter />
+              <MessageCenter defaultTab="compose" />
             </div>
           </TabsContent>
 

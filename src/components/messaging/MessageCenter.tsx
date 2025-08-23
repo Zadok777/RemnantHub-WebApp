@@ -18,10 +18,15 @@ import {
 } from 'lucide-react';
 import { mockMessages, mockCommunities, mockUsers } from '@/data/mockData';
 
-const MessageCenter = () => {
+interface MessageCenterProps {
+  defaultTab?: string;
+}
+
+const MessageCenter: React.FC<MessageCenterProps> = ({ defaultTab = 'conversations' }) => {
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
   const [newMessage, setNewMessage] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [activeTab, setActiveTab] = useState(defaultTab);
 
   // Group messages by conversation
   const conversations = mockMessages.reduce((acc, message) => {
@@ -51,7 +56,7 @@ const MessageCenter = () => {
 
   return (
     <div className="h-[600px] bg-background rounded-lg border overflow-hidden">
-      <Tabs defaultValue="conversations" className="h-full flex flex-col">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
         <div className="border-b p-4">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="conversations">Messages</TabsTrigger>
