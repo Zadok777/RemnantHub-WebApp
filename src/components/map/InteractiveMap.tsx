@@ -8,11 +8,11 @@ import { Badge } from '@/components/ui/badge';
 import { MapPin, Navigation, Settings } from 'lucide-react';
 import { useLocation } from '@/hooks/useLocation';
 import { supabase } from '@/integrations/supabase/client';
-import { Community } from '@/data/mockData';
+import { MapCommunity } from '@/components/map/types';
 
 interface InteractiveMapProps {
-  communities?: Community[];
-  onCommunitySelect?: (community: Community) => void;
+  communities?: MapCommunity[];
+  onCommunitySelect?: (community: MapCommunity) => void;
   height?: string;
 }
 
@@ -26,7 +26,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
   const [mapboxToken, setMapboxToken] = useState('');
   const [tokenLoading, setTokenLoading] = useState(true);
   const [tokenError, setTokenError] = useState('');
-  const [selectedCommunity, setSelectedCommunity] = useState<Community | null>(null);
+  const [selectedCommunity, setSelectedCommunity] = useState<MapCommunity | null>(null);
   const { location, getCurrentLocation, loading: locationLoading } = useLocation();
 
   // Fetch Mapbox token on component mount
@@ -81,17 +81,17 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
       const marker = new mapboxgl.Marker({
         color: '#E85A2B' // Primary color
       })
-        .setLngLat([community.location.lng, community.location.lat])
+        .setLngLat([community.location_lng, community.location_lat])
         .setPopup(
           new mapboxgl.Popup({ offset: 25 })
             .setHTML(`
               <div class="p-2">
                 <h3 class="font-semibold text-lg">${community.name}</h3>
-                <p class="text-sm text-gray-600 mb-2">${community.location.city}, ${community.location.state}</p>
-                <p class="text-xs text-gray-500 mb-2">${community.description}</p>
+                <p class="text-sm text-gray-600 mb-2">${community.location_city}, ${community.location_state}</p>
+                <p class="text-xs text-gray-500 mb-2">${community.description || ''}</p>
                 <div class="flex justify-between items-center">
-                  <span class="text-xs bg-primary/10 text-primary px-2 py-1 rounded">${community.trustLevel}</span>
-                  <span class="text-xs">${community.members} members</span>
+                  <span class="text-xs bg-primary/10 text-primary px-2 py-1 rounded">${community.trust_level}</span>
+                  <span class="text-xs">${community.member_count} members</span>
                 </div>
               </div>
             `)
@@ -188,20 +188,20 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
             <div className="flex justify-between items-start">
               <CardTitle className="text-lg">{selectedCommunity.name}</CardTitle>
               <Badge className="bg-primary/10 text-primary">
-                {selectedCommunity.trustLevel}
+                {selectedCommunity.trust_level}
               </Badge>
             </div>
           </CardHeader>
           <CardContent className="pt-0">
             <p className="text-sm text-muted-foreground mb-2">
-              {selectedCommunity.location.city}, {selectedCommunity.location.state}
+              {selectedCommunity.location_city}, {selectedCommunity.location_state}
             </p>
             <p className="text-xs text-muted-foreground mb-3">
-              {selectedCommunity.description.substring(0, 100)}...
+              {selectedCommunity.description ? selectedCommunity.description.substring(0, 100) + '...' : 'No description available'}
             </p>
             <div className="flex justify-between items-center text-xs">
-              <span>{selectedCommunity.members} members</span>
-              <span>{selectedCommunity.meetingDay}s</span>
+              <span>{selectedCommunity.member_count} members</span>
+              <span>{selectedCommunity.meeting_day}s at {selectedCommunity.meeting_time}</span>
             </div>
           </CardContent>
         </Card>
