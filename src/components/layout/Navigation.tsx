@@ -24,9 +24,11 @@ const Navigation = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <Home className="w-5 h-5 text-primary-foreground" />
-            </div>
+            <img 
+              src="/lovable-uploads/6c5c7043-4203-46aa-b99f-b705da559ade.png" 
+              alt="RemnantHub Logo" 
+              className="w-10 h-10"
+            />
             <div>
               <h1 className="text-xl font-bold text-foreground">RemnantHub</h1>
               <p className="text-xs text-muted-foreground hidden sm:block">
