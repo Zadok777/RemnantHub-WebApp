@@ -29,14 +29,14 @@ const Features = () => {
     {
       icon: Shield,
       title: 'Trust & Verification System',
-      description: 'Connect with confidence through our community trust levels and verification process.',
-      benefits: ['Community verification', 'Leader background checks', 'Member testimonials', 'Trust badges']
+      description: 'Connect with confidence through our community trust levels and reference verification.',
+      benefits: ['Community verification', 'Leader references', 'Member testimonials', 'Trust badges']
     },
     {
       icon: Search,
       title: 'Advanced Filtering',
       description: 'Find your perfect community match with detailed search filters and preferences.',
-      benefits: ['Denomination filtering', 'Meeting time preferences', 'Community size options', 'Ministry focus']
+      benefits: ['Meeting time preferences', 'Biblical focus areas', 'Distance filtering', 'Leadership style']
     },
     {
       icon: MessageSquare,
@@ -51,10 +51,10 @@ const Features = () => {
       benefits: ['Rich descriptions', 'Photo galleries', 'Leader profiles', 'Meeting schedules']
     },
     {
-      icon: Calendar,
-      title: 'Event Management',
-      description: 'Stay connected with community events, services, and special gatherings.',
-      benefits: ['Event calendars', 'RSVP management', 'Reminder notifications', 'Event sharing']
+      icon: BookOpen,
+      title: 'Biblical Focus',
+      description: 'Connect based on apostolic teachings and New Testament church structure.',
+      benefits: ['Scripture-centered fellowship', 'Apostolic teaching focus', 'Breaking bread together', 'Prayer partnerships']
     }
   ];
 
@@ -161,7 +161,7 @@ const Features = () => {
             {[
               { level: 'New', color: 'bg-blue-100 text-blue-800', description: 'Recently joined communities building their presence' },
               { level: 'Established', color: 'bg-green-100 text-green-800', description: 'Active communities with consistent meeting history' },
-              { level: 'Verified', color: 'bg-primary/10 text-primary', description: 'Background-checked leaders and verified information' },
+              { level: 'Verified', color: 'bg-primary/10 text-primary', description: 'Reference-checked leaders and verified information' },
               { level: 'Endorsed', color: 'bg-purple-100 text-purple-800', description: 'Recommended by other trusted community leaders' }
             ].map((trust) => (
               <Card key={trust.level} className="text-center">
