@@ -74,7 +74,7 @@ const About = () => {
             "And let us consider how to stir up one another to love and good works, 
             not neglecting to meet together, as is the habit of some, but encouraging one another."
             <br />
-            <span className="text-primary font-semibold">- Hebrews 10:24-25 ESV</span>
+            <span className="text-primary font-semibold">- Hebrews 10:24-25</span>
           </div>
         </div>
       </section>
