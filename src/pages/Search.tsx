@@ -95,7 +95,7 @@ const Search = () => {
   }
 
   return (
-    <div className="page-container bg-church-interior faded-overlay">
+    <div className="page-container bg-house-church-fellowship faded-overlay">
       <div className="content-container section-spacing">
         {/* Header */}
         <div className="text-center mb-12">

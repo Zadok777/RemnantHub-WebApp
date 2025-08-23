@@ -18,7 +18,8 @@ import {
   MessageCircle, 
   AlertCircle,
   Hand,
-  Search
+  Search,
+  Trash2
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -214,6 +215,35 @@ const PrayerRequests = () => {
       toast({
         title: "Error",
         description: "Failed to record prayer",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleDeletePrayer = async (requestId: string) => {
+    if (!user) return;
+
+    try {
+      const { error } = await supabase
+        .from('prayer_requests')
+        .delete()
+        .eq('id', requestId)
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Prayer Request Deleted",
+        description: "Your prayer request has been removed."
+      });
+
+      loadUserPrayers();
+      loadPrayerRequests();
+    } catch (error) {
+      console.error('Error deleting prayer request:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete prayer request",
         variant: "destructive"
       });
     }
@@ -459,7 +489,16 @@ const PrayerRequests = () => {
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-muted-foreground">{prayer.description}</p>
+                    <p className="text-muted-foreground mb-4">{prayer.description}</p>
+                    <Button 
+                      onClick={() => handleDeletePrayer(prayer.id)}
+                      variant="outline"
+                      size="sm"
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Delete Prayer
+                    </Button>
                   </CardContent>
                 </Card>
               ))}

@@ -80,7 +80,7 @@ const Features = () => {
   ];
 
   return (
-    <div className="page-container bg-journey-light faded-overlay">
+    <div className="page-container bg-features-community faded-overlay">
       {/* Hero Section */}
       <section className="py-20 text-center">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">

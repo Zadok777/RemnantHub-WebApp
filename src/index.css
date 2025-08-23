@@ -177,6 +177,34 @@ All colors MUST be HSL for proper theming.
     background-repeat: no-repeat;
   }
   
+  .bg-house-church-fellowship {
+    background-image: url('/src/assets/house-church-fellowship.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  
+  .bg-features-community {
+    background-image: url('/src/assets/features-community.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  
+  .bg-about-mission {
+    background-image: url('/src/assets/about-mission.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  
+  .bg-church-welcome-light {
+    background-image: url('/src/assets/church-welcome-light.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  
   .faded-overlay {
     position: relative;
   }

@@ -59,7 +59,7 @@ const About = () => {
   ];
 
   return (
-    <div className="page-container bg-cross-mountain faded-overlay">
+    <div className="page-container bg-about-mission faded-overlay">
       {/* Hero Section */}
       <section className="section-spacing">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
