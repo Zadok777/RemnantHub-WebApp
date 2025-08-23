@@ -15,16 +15,16 @@ const Donate = () => {
   const donationAmounts = [10, 25, 50, 100, 250];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
+    <div className="page-container bg-peaceful-waters faded-overlay">
       {/* Hero Section */}
-      <section className="py-20">
+      <section className="section-spacing">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6 text-glow">
             Support RemnantHub
           </h1>
-          <p className="text-xl text-muted-foreground mb-8">
+          <div className="divine-text mb-8">
             Help us connect faith communities and spread the Gospel by supporting our mission
-          </p>
+          </div>
         </div>
       </section>
 

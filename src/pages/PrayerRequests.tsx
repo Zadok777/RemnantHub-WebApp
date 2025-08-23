@@ -235,14 +235,15 @@ const PrayerRequests = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-6xl">
-      <div className="text-center mb-8">
-        <div className="flex justify-center mb-4">
-          <Hand className="h-12 w-12 text-primary" />
+    <div className="page-container bg-spiritual-hands faded-overlay">
+      <div className="content-container section-spacing">
+        <div className="text-center mb-8">
+          <div className="flex justify-center mb-4">
+            <Hand className="h-12 w-12 text-primary" />
+          </div>
+          <h1 className="text-4xl font-bold text-foreground mb-4 text-glow">Prayer Requests</h1>
+          <p className="text-muted-foreground text-lg">Share your prayer needs and pray for others in our community</p>
         </div>
-        <h1 className="text-4xl font-bold text-foreground mb-4">Prayer Requests</h1>
-        <p className="text-muted-foreground">Share your prayer needs and pray for others in our community</p>
-      </div>
 
       <Tabs defaultValue="browse" className="space-y-6">
         <TabsList className="grid w-full grid-cols-2">
@@ -282,8 +283,8 @@ const PrayerRequests = () => {
             )}
           </div>
 
-          {showCreateForm && (
-            <Card>
+            {showCreateForm && (
+            <Card className="card-hover">
               <CardHeader>
                 <CardTitle>Share a Prayer Request</CardTitle>
                 <CardDescription>Let the community know how they can pray for you</CardDescription>
@@ -362,7 +363,7 @@ const PrayerRequests = () => {
 
           <div className="space-y-4">
             {filteredRequests.map((request) => (
-              <Card key={request.id} className={request.is_urgent ? 'border-orange-500' : ''}>
+              <Card key={request.id} className={`card-hover ${request.is_urgent ? 'border-orange-500' : ''}`}>
                 <CardHeader>
                   <div className="flex justify-between items-start">
                     <div className="space-y-2">
@@ -480,6 +481,7 @@ const PrayerRequests = () => {
           )}
         </TabsContent>
       </Tabs>
+      </div>
     </div>
   );
 };

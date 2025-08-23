@@ -149,6 +149,34 @@ All colors MUST be HSL for proper theming.
     background-repeat: no-repeat;
   }
   
+  .bg-church-interior {
+    background-image: url('/src/assets/church-interior-faded.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  
+  .bg-cross-mountain {
+    background-image: url('/src/assets/cross-mountain-faded.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  
+  .bg-peaceful-waters {
+    background-image: url('/src/assets/peaceful-waters-faded.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  
+  .bg-holy-book {
+    background-image: url('/src/assets/holy-book-light.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  
   .faded-overlay {
     position: relative;
   }
@@ -175,5 +203,34 @@ All colors MUST be HSL for proper theming.
       hsl(var(--cross-cream) / 0.2),
       hsl(var(--soft-beige) / 0.1)
     );
+  }
+  
+  /* Enhanced Visual Polish */
+  .page-container {
+    @apply min-h-screen;
+  }
+  
+  .section-spacing {
+    @apply py-16 md:py-20;
+  }
+  
+  .content-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  .text-glow {
+    text-shadow: 0 0 20px hsl(var(--primary) / 0.3);
+  }
+  
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-2xl hover:scale-[1.02];
+  }
+  
+  .divine-text {
+    @apply text-center italic text-lg leading-relaxed;
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--flame-orange)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 }

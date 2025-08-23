@@ -217,7 +217,7 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20 flex items-center justify-center p-4">
+    <div className="page-container bg-peaceful-waters faded-overlay flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
@@ -225,10 +225,10 @@ const Auth = () => {
           <p className="text-muted-foreground">
             Join the community of believers gathering in homes
           </p>
-          <div className="scripture-text mt-4 text-sm">
+          <div className="divine-text mt-4 text-sm">
             "And they devoted themselves to the apostles' teaching and the fellowship,<br />
             to the breaking of bread and the prayers."<br />
-            <span className="text-primary font-semibold">- Acts 2:42 ESV</span>
+            <span className="text-primary font-semibold text-glow">- Acts 2:42 ESV</span>
           </div>
         </div>
 

@@ -205,8 +205,8 @@ const Dashboard = () => {
     : 'Location not set';
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="page-container bg-community-gathering faded-overlay">
+      <div className="content-container section-spacing">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-foreground mb-2">Dashboard</h1>

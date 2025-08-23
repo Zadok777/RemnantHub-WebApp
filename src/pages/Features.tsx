@@ -80,22 +80,22 @@ const Features = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
+    <div className="page-container bg-journey-light faded-overlay">
       {/* Hero Section */}
       <section className="py-20 text-center">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6 text-glow">
             Connecting Authentic Christian Communities
           </h1>
           <p className="text-xl text-muted-foreground mb-8">
             Built specifically for house churches following the New Testament model of fellowship, 
             teaching, breaking bread, and prayer.
           </p>
-          <div className="scripture-text mb-8">
+          <div className="divine-text mb-8">
             "And they devoted themselves to the apostles' teaching and the fellowship, 
             to the breaking of bread and the prayers."
             <br />
-            <span className="text-primary font-semibold">- Acts 2:42 ESV</span>
+            <span className="text-primary font-semibold text-glow">- Acts 2:42 ESV</span>
           </div>
         </div>
       </section>

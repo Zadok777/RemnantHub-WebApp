@@ -83,18 +83,19 @@ const FAQ = () => {
   ];
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <div className="text-center mb-8">
-        <div className="flex justify-center mb-4">
-          <HelpCircle className="h-12 w-12 text-primary" />
+    <div className="page-container bg-holy-book faded-overlay">
+      <div className="content-container section-spacing">
+        <div className="text-center mb-8">
+          <div className="flex justify-center mb-4">
+            <HelpCircle className="h-12 w-12 text-primary" />
+          </div>
+          <h1 className="text-4xl font-bold text-foreground mb-4 text-glow">Frequently Asked Questions</h1>
+          <p className="text-muted-foreground text-lg">Find answers to common questions about RemnantHub</p>
         </div>
-        <h1 className="text-4xl font-bold text-foreground mb-4">Frequently Asked Questions</h1>
-        <p className="text-muted-foreground">Find answers to common questions about RemnantHub</p>
-      </div>
 
       <div className="space-y-8">
         {faqCategories.map((category, categoryIndex) => (
-          <Card key={categoryIndex}>
+          <Card key={categoryIndex} className="card-hover">
             <CardHeader>
               <div className="flex items-center gap-3">
                 <CardTitle className="text-xl">{category.category}</CardTitle>
@@ -151,6 +152,7 @@ const FAQ = () => {
             </Button>
           </CardContent>
         </Card>
+      </div>
       </div>
     </div>
   );

@@ -59,9 +59,9 @@ const About = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
+    <div className="page-container bg-cross-mountain faded-overlay">
       {/* Hero Section */}
-      <section className="py-20">
+      <section className="section-spacing">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
             Our Story & Mission
@@ -70,11 +70,11 @@ const About = () => {
             RemnantHub was born from a simple truth: authentic Christian fellowship happens best 
             in intimate, home-based communities where believers can truly know and be known.
           </p>
-          <div className="scripture-text mb-8">
+          <div className="divine-text mb-8">
             "And let us consider how to stir up one another to love and good works, 
             not neglecting to meet together, as is the habit of some, but encouraging one another."
             <br />
-            <span className="text-primary font-semibold">- Hebrews 10:24-25</span>
+            <span className="text-primary font-semibold text-glow">- Hebrews 10:24-25</span>
           </div>
         </div>
       </section>
@@ -135,7 +135,7 @@ const About = () => {
             {values.map((value) => {
               const Icon = value.icon;
               return (
-                <Card key={value.title} className="community-card text-center h-full">
+                <Card key={value.title} className="community-card card-hover text-center h-full">
                   <CardHeader>
                     <div className="p-4 rounded-xl bg-primary/10 mx-auto mb-4 w-fit">
                       <Icon className="w-8 h-8 text-primary" />
