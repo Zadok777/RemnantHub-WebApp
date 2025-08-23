@@ -23,19 +23,19 @@ const Navigation = () => {
 
   return (
     <nav className="bg-background/95 backdrop-blur-md border-b border-border sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-6">
+      <div className="max-w-7xl mx-auto px-1 sm:px-2 lg:px-4">
         <div className="flex justify-between items-center h-16">
-          {/* Logo - More compact layout */}
-          <Link to="/" className="flex items-center space-x-2 flex-shrink-0 min-w-0">
+          {/* Logo - Moved far left with minimal spacing */}
+          <Link to="/" className="flex items-center space-x-1 flex-shrink-0 min-w-0 mr-4">
             <img 
               src="/lovable-uploads/6c5c7043-4203-46aa-b99f-b705da559ade.png" 
               alt="RemnantHub Logo" 
-              className="w-10 h-10 flex-shrink-0"
+              className="w-8 h-8 flex-shrink-0"
             />
             <div className="min-w-0">
-              <h1 className="text-lg font-bold text-foreground leading-tight truncate">RemnantHub</h1>
+              <h1 className="text-sm font-bold text-foreground leading-tight truncate">RemnantHub</h1>
               <p className="text-xs text-muted-foreground hidden sm:block leading-tight truncate">
-                Connecting Communities
+                Communities
               </p>
             </div>
           </Link>
