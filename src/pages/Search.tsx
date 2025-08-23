@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { MapPin, Users, Clock, Star, Filter, Search as SearchIcon, Navigation, Map } from 'lucide-react';
-import { mockCommunities, Community } from '@/data/mockData';
+import { useCommunities } from '@/hooks/useCommunities';
 import { Link } from 'react-router-dom';
 import { useLocation, calculateDistance } from '@/hooks/useLocation';
 import InteractiveMap from '@/components/map/InteractiveMap';
@@ -18,25 +18,26 @@ const Search = () => {
   const [selectedFeatures, setSelectedFeatures] = useState<string[]>([]);
   const [showMap, setShowMap] = useState(false);
   const { location, getCurrentLocation, loading: locationLoading } = useLocation();
+  const { communities, loading: communitiesLoading } = useCommunities();
 
   // Filter and search logic
   const filteredCommunities = useMemo(() => {
-    return mockCommunities.filter(community => {
+    return communities.filter(community => {
       // Search term filter
       const matchesSearch = searchTerm === '' || 
         community.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        community.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        community.location.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        community.location.state.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (community.description && community.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        community.location_city.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        community.location_state.toLowerCase().includes(searchTerm.toLowerCase()) ||
         community.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
 
       // Trust level filter
       const matchesTrustLevel = selectedTrustLevels.length === 0 || 
-        selectedTrustLevels.includes(community.trustLevel);
+        selectedTrustLevels.includes(community.trust_level);
 
       // Meeting day filter
       const matchesDay = selectedDays.length === 0 || 
-        selectedDays.includes(community.meetingDay);
+        selectedDays.includes(community.meeting_day);
 
       // Features filter
       const matchesFeatures = selectedFeatures.length === 0 || 
@@ -44,14 +45,14 @@ const Search = () => {
 
       return matchesSearch && matchesTrustLevel && matchesDay && matchesFeatures;
     });
-  }, [searchTerm, selectedTrustLevels, selectedDays, selectedFeatures]);
+  }, [searchTerm, selectedTrustLevels, selectedDays, selectedFeatures, communities]);
 
   const getTrustLevelColor = (level: string) => {
     switch (level) {
-      case 'New': return 'bg-blue-100 text-blue-800';
-      case 'Established': return 'bg-green-100 text-green-800';
-      case 'Verified': return 'bg-primary/10 text-primary';
-      case 'Endorsed': return 'bg-purple-100 text-purple-800';
+      case 'new': return 'bg-blue-100 text-blue-800';
+      case 'established': return 'bg-green-100 text-green-800';
+      case 'verified': return 'bg-primary/10 text-primary';
+      case 'endorsed': return 'bg-purple-100 text-purple-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
@@ -79,6 +80,19 @@ const Search = () => {
       setSelectedFeatures(prev => prev.filter(f => f !== feature));
     }
   };
+
+  if (communitiesLoading) {
+    return (
+      <div className="page-container bg-church-interior faded-overlay">
+        <div className="content-container section-spacing flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading communities...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="page-container bg-church-interior faded-overlay">
@@ -160,7 +174,7 @@ const Search = () => {
                 <div>
                   <h4 className="font-medium mb-3">Trust Level</h4>
                   <div className="space-y-2">
-                    {['New', 'Established', 'Verified', 'Endorsed'].map((level) => (
+                    {['new', 'established', 'verified', 'endorsed'].map((level) => (
                       <div key={level} className="flex items-center space-x-2">
                         <Checkbox 
                           id={`trust-${level}`}
@@ -168,7 +182,7 @@ const Search = () => {
                           onCheckedChange={(checked) => handleTrustLevelChange(level, checked as boolean)}
                         />
                         <label htmlFor={`trust-${level}`} className="cursor-pointer">
-                          <Badge className={getTrustLevelColor(level)}>{level}</Badge>
+                          <Badge className={getTrustLevelColor(level)}>{level.charAt(0).toUpperCase() + level.slice(1)}</Badge>
                         </label>
                       </div>
                     ))}
@@ -246,11 +260,11 @@ const Search = () => {
                         <CardTitle className="text-xl">{community.name}</CardTitle>
                         <CardDescription className="flex items-center mt-2">
                           <MapPin className="w-4 h-4 mr-1" />
-                          {community.location.city}, {community.location.state}
+                          {community.location_city}, {community.location_state}
                         </CardDescription>
                       </div>
-                      <Badge className={getTrustLevelColor(community.trustLevel)}>
-                        {community.trustLevel}
+                      <Badge className={getTrustLevelColor(community.trust_level)}>
+                        {community.trust_level.charAt(0).toUpperCase() + community.trust_level.slice(1)}
                       </Badge>
                     </div>
                   </CardHeader>
@@ -271,11 +285,11 @@ const Search = () => {
                     <div className="flex justify-between items-center text-sm text-muted-foreground mb-4">
                       <div className="flex items-center">
                         <Users className="w-4 h-4 mr-1" />
-                        {community.members} members
+                        {community.member_count} members
                       </div>
                       <div className="flex items-center">
                         <Clock className="w-4 h-4 mr-1" />
-                        {community.meetingDay}s at {community.meetingTime}
+                        {community.meeting_day}s at {community.meeting_time}
                       </div>
                       {location && (
                         <div className="flex items-center">
@@ -283,8 +297,8 @@ const Search = () => {
                           {calculateDistance(
                             location.latitude,
                             location.longitude,
-                            community.location.lat,
-                            community.location.lng
+                            community.location_lat,
+                            community.location_lng
                           )} mi
                         </div>
                       )}

@@ -10,6 +10,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Switch } from '@/components/ui/switch';
 import MessageCenter from '@/components/messaging/MessageCenter';
 import { SettingsManager } from '@/components/settings/SettingsManager';
+import { PhotoUpload } from '@/components/profile/PhotoUpload';
+import { useCommunities } from '@/hooks/useCommunities';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -62,7 +64,6 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [communities, setCommunities] = useState<Community[]>([]);
   const [formData, setFormData] = useState({
     display_name: '',
     bio: '',
@@ -72,14 +73,15 @@ const Dashboard = () => {
   
   const { user } = useAuth();
   const { toast } = useToast();
+  const { userCommunities, loadUserCommunities } = useCommunities();
 
   // Load user profile and communities
   useEffect(() => {
     if (user) {
       loadProfile();
-      loadCommunities();
+      loadUserCommunities(user.id);
     }
-  }, [user]);
+  }, [user, loadUserCommunities]);
 
   const loadProfile = async () => {
     try {
@@ -112,37 +114,6 @@ const Dashboard = () => {
     }
   };
 
-  const loadCommunities = async () => {
-    try {
-      // Get communities where user is a member
-      const { data: memberData, error: memberError } = await supabase
-        .from('community_members')
-        .select(`
-          role,
-          communities (
-            id,
-            name,
-            description,
-            meeting_day,
-            meeting_time,
-            trust_level,
-            member_count
-          )
-        `)
-        .eq('user_id', user?.id);
-
-      if (memberError) throw memberError;
-
-      const communitiesWithRole = memberData?.map(item => ({
-        ...item.communities,
-        role: item.role
-      })) || [];
-
-      setCommunities(communitiesWithRole);
-    } catch (error) {
-      console.error('Error loading communities:', error);
-    }
-  };
 
   const saveProfile = async () => {
     if (!user) return;
@@ -266,21 +237,21 @@ const Dashboard = () => {
                       <Church className="w-5 h-5 text-primary" />
                       <span>Communities</span>
                     </div>
-                    <span className="font-semibold">{communities.length}</span>
+                    <span className="font-semibold">{userCommunities.length}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
                       <Users className="w-5 h-5 text-primary" />
                       <span>Connections</span>
                     </div>
-                    <span className="font-semibold">{communities.reduce((acc, c) => acc + c.member_count, 0)}</span>
+                    <span className="font-semibold">{userCommunities.reduce((acc, c) => acc + c.member_count, 0)}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
                       <Calendar className="w-5 h-5 text-primary" />
                       <span>Events Attended</span>
                     </div>
-                    <span className="font-semibold">{communities.length * 4}</span>
+                    <span className="font-semibold">{userCommunities.length * 4}</span>
                   </div>
                 </CardContent>
               </Card>
@@ -294,8 +265,8 @@ const Dashboard = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {communities.length > 0 ? (
-                      communities.slice(0, 3).map((community, index) => (
+                    {userCommunities.length > 0 ? (
+                      userCommunities.slice(0, 3).map((community, index) => (
                         <div key={community.id} className="flex items-center space-x-3">
                           <div className="w-2 h-2 bg-primary rounded-full"></div>
                           <div>
@@ -324,11 +295,9 @@ const Dashboard = () => {
                   <CardTitle>Quick Actions</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  <Button className="w-full justify-start" variant="outline" asChild>
-                    <a href="/search">
-                      <Plus className="w-4 h-4 mr-2" />
-                      Create New Community
-                    </a>
+                  <Button className="w-full justify-start" variant="outline" disabled>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Create New Community (Coming Soon)
                   </Button>
                   <Button className="w-full justify-start" variant="outline" asChild>
                     <a href="/search">
@@ -362,17 +331,22 @@ const Dashboard = () => {
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="flex items-center space-x-6">
-                  <Avatar className="w-24 h-24">
-                    <AvatarImage src={profile?.avatar_url || ''} />
-                    <AvatarFallback className="bg-primary/10 text-primary text-2xl">
-                      {displayName.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  {isEditing && (
-                    <Button variant="outline" disabled>
-                      <User className="w-4 h-4 mr-2" />
-                      Change Photo (Coming Soon)
-                    </Button>
+                  {isEditing ? (
+                    <PhotoUpload
+                      currentPhotoUrl={profile?.avatar_url}
+                      userId={user!.id}
+                      displayName={displayName}
+                      onPhotoUpdate={(url) => {
+                        setProfile(prev => prev ? { ...prev, avatar_url: url } : null);
+                      }}
+                    />
+                  ) : (
+                    <Avatar className="w-24 h-24">
+                      <AvatarImage src={profile?.avatar_url || ''} />
+                      <AvatarFallback className="bg-primary/10 text-primary text-2xl">
+                        {displayName.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
                   )}
                 </div>
 
@@ -475,8 +449,8 @@ const Dashboard = () => {
             </div>
 
             <div className="grid gap-6">
-              {communities.length > 0 ? (
-                communities.map((community) => (
+              {userCommunities.length > 0 ? (
+                userCommunities.map((community) => (
                   <Card key={community.id} className="community-card">
                     <CardHeader>
                       <div className="flex justify-between items-start">
@@ -548,7 +522,7 @@ const Dashboard = () => {
             </div>
           </TabsContent>
 
-          {/* Settings Tab */}
+          {/* Messages Tab */}
           <TabsContent value="messages" className="space-y-6">
             <div className="community-card">
               <div className="flex items-center justify-between mb-6">
@@ -558,20 +532,9 @@ const Dashboard = () => {
                     Connect with community leaders and members
                   </p>
                 </div>
-                <Button onClick={() => {
-                  setActiveTab('messages');
-                  // Small delay to ensure tab is rendered, then switch to compose
-                  setTimeout(() => {
-                    const composeTab = document.querySelector('[value="compose"]') as HTMLElement;
-                    if (composeTab) composeTab.click();
-                  }, 100);
-                }}>
-                  <MessageSquare className="w-4 h-4 mr-2" />
-                  New Message
-                </Button>
               </div>
               
-              <MessageCenter defaultTab="compose" />
+              <MessageCenter />
             </div>
           </TabsContent>
 
