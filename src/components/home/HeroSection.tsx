@@ -4,11 +4,9 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Search } from 'lucide-react';
 import bibleBackground from '@/assets/bible-hands-background.jpg';
 const HeroSection = () => {
-  return <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden bg-gradient-to-b from-background to-muted">
-      {/* Faded Bible Background */}
-      <div className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-10" style={{
-      backgroundImage: `url(${bibleBackground})`
-    }}></div>
+  return <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden bg-spiritual-hands faded-overlay">
+      {/* Enhanced Spiritual Background with Additional Overlay */}
+      <div className="absolute inset-0 spiritual-gradient"></div>
 
       {/* Content */}
       <div className="relative z-10 text-center max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
