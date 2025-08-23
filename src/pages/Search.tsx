@@ -150,7 +150,7 @@ const Search = () => {
         {showMap && (
           <div className="mb-8">
             <InteractiveMap 
-              communities={filteredCommunities}
+              communities={filteredCommunities as any}
               onCommunitySelect={(community) => {
                 // Scroll to community card when clicked on map
                 const element = document.getElementById(`community-${community.id}`);
