@@ -66,28 +66,11 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
       // Create unique filename
       const fileExt = file.name.split('.').pop();
       const fileName = `${userId}-${Date.now()}.${fileExt}`;
-      const filePath = `avatars/${fileName}`;
+      const filePath = `${userId}/${fileName}`;
 
-      // First, ensure the avatars bucket exists
-      const { data: buckets } = await supabase.storage.listBuckets();
-      const avatarsBucket = buckets?.find(bucket => bucket.name === 'avatars');
-      
-      if (!avatarsBucket) {
-        // Create the bucket if it doesn't exist
-        const { error: bucketError } = await supabase.storage.createBucket('avatars', {
-          public: true,
-          allowedMimeTypes: ['image/*'],
-          fileSizeLimit: 5242880 // 5MB
-        });
-        
-        if (bucketError) {
-          throw bucketError;
-        }
-      }
-
-      // Upload the file
+      // Upload the file to profiles bucket
       const { data, error } = await supabase.storage
-        .from('avatars')
+        .from('profiles')
         .upload(filePath, file, {
           cacheControl: '3600',
           upsert: false
@@ -97,7 +80,7 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
 
       // Get the public URL
       const { data: urlData } = supabase.storage
-        .from('avatars')
+        .from('profiles')
         .getPublicUrl(filePath);
 
       const photoUrl = urlData.publicUrl;
@@ -111,10 +94,10 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
       if (updateError) throw updateError;
 
       // Delete old avatar if it exists
-      if (currentPhotoUrl && currentPhotoUrl.includes('avatars/')) {
-        const oldPath = currentPhotoUrl.split('/avatars/')[1];
+      if (currentPhotoUrl && currentPhotoUrl.includes('profiles/')) {
+        const oldPath = currentPhotoUrl.split('/profiles/')[1];
         if (oldPath) {
-          await supabase.storage.from('avatars').remove([`avatars/${oldPath}`]);
+          await supabase.storage.from('profiles').remove([oldPath]);
         }
       }
 
@@ -151,11 +134,11 @@ export const PhotoUpload: React.FC<PhotoUploadProps> = ({
 
       if (updateError) throw updateError;
 
-      // Delete the file from storage if it's in our avatars bucket
-      if (currentPhotoUrl.includes('avatars/')) {
-        const filePath = currentPhotoUrl.split('/avatars/')[1];
+      // Delete the file from storage if it's in our profiles bucket
+      if (currentPhotoUrl.includes('profiles/')) {
+        const filePath = currentPhotoUrl.split('/profiles/')[1];
         if (filePath) {
-          await supabase.storage.from('avatars').remove([`avatars/${filePath}`]);
+          await supabase.storage.from('profiles').remove([filePath]);
         }
       }
 

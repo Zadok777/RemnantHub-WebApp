@@ -122,21 +122,18 @@ const Dashboard = () => {
     setSaving(true);
     try {
       const profileData = {
-        user_id: user.id,
-        email: user.email,
         display_name: formData.display_name || null,
         bio: formData.bio || null,
         location_city: formData.location_city || null,
-        location_state: formData.location_state || null
+        location_state: formData.location_state || null,
+        updated_at: new Date().toISOString()
       };
 
-      // Use upsert with onConflict to handle existing profiles
+      // Use UPDATE instead of UPSERT since profile already exists
       const { data, error } = await supabase
         .from('profiles')
-        .upsert(profileData, { 
-          onConflict: 'user_id',
-          ignoreDuplicates: false 
-        })
+        .update(profileData)
+        .eq('user_id', user.id)
         .select()
         .single();
 
