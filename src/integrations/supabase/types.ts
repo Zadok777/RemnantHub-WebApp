@@ -106,6 +106,75 @@ export type Database = {
           },
         ]
       }
+      prayer_requests: {
+        Row: {
+          category: string
+          created_at: string
+          description: string
+          expires_at: string | null
+          id: string
+          is_anonymous: boolean
+          is_urgent: boolean
+          prayer_count: number
+          status: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          description: string
+          expires_at?: string | null
+          id?: string
+          is_anonymous?: boolean
+          is_urgent?: boolean
+          prayer_count?: number
+          status?: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string
+          expires_at?: string | null
+          id?: string
+          is_anonymous?: boolean
+          is_urgent?: boolean
+          prayer_count?: number
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      prayer_responses: {
+        Row: {
+          created_at: string
+          id: string
+          message: string | null
+          prayer_request_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message?: string | null
+          prayer_request_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string | null
+          prayer_request_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -156,7 +225,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      increment_prayer_count: {
+        Args: { request_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
