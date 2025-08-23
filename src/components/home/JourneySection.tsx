@@ -2,8 +2,11 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { Users, MapPin, Heart, BookOpen } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 const JourneySection = () => {
+  const { user } = useAuth();
+  
   const features = [
     {
       icon: Users,
@@ -90,8 +93,8 @@ const JourneySection = () => {
                 </Link>
               </Button>
               <Button size="lg" variant="secondary" asChild>
-                <Link to="/signup">
-                  Get Started Free
+                <Link to={user ? "/dashboard" : "/auth"}>
+                  {user ? "Go to Dashboard" : "Get Started Free"}
                 </Link>
               </Button>
             </div>

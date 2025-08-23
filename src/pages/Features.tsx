@@ -17,8 +17,10 @@ import {
   Globe
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Features = () => {
+  const { user } = useAuth();
   const features = [
     {
       icon: MapPin,
@@ -232,8 +234,8 @@ const Features = () => {
               </Link>
             </Button>
             <Button size="lg" variant="secondary" asChild>
-              <Link to="/auth">
-                Get Started Free
+              <Link to={user ? "/dashboard" : "/auth"}>
+                {user ? "Go to Dashboard" : "Get Started Free"}
               </Link>
             </Button>
           </div>

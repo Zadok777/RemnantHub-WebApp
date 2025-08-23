@@ -32,7 +32,10 @@ import {
   UserPlus,
   MessageSquare,
   Save,
-  Loader2
+  Loader2,
+  Share2,
+  Copy,
+  CheckCircle
 } from 'lucide-react';
 
 interface Profile {
@@ -65,6 +68,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [inviteCopied, setInviteCopied] = useState(false);
   const [formData, setFormData] = useState({
     display_name: '',
     bio: '',
@@ -177,6 +181,47 @@ const Dashboard = () => {
       });
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleInviteFriends = async () => {
+    const inviteUrl = `${window.location.origin}?ref=${user?.id}`;
+    const inviteText = `Hey! I'm using RemnantHub to connect with authentic Christian house church communities. Check it out: ${inviteUrl}`;
+    
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: 'Join me on RemnantHub',
+          text: inviteText,
+          url: inviteUrl
+        });
+      } else {
+        await navigator.clipboard.writeText(inviteText);
+        setInviteCopied(true);
+        setTimeout(() => setInviteCopied(false), 2000);
+        toast({
+          title: "Invite link copied!",
+          description: "Share with friends to invite them to RemnantHub.",
+        });
+      }
+    } catch (error) {
+      console.error('Error sharing:', error);
+      // Fallback to copying
+      try {
+        await navigator.clipboard.writeText(inviteText);
+        setInviteCopied(true);
+        setTimeout(() => setInviteCopied(false), 2000);
+        toast({
+          title: "Invite link copied!",
+          description: "Share with friends to invite them to RemnantHub.",
+        });
+      } catch (copyError) {
+        toast({
+          title: "Could not copy invite link",
+          description: "Please try again later.",
+          variant: "destructive"
+        });
+      }
     }
   };
 
@@ -316,9 +361,18 @@ const Dashboard = () => {
                   <CardTitle>Quick Actions</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  <Button className="w-full justify-start" variant="outline" disabled>
+                  <Button 
+                    className="w-full justify-start" 
+                    variant="outline" 
+                    onClick={() => {
+                      toast({
+                        title: "Coming Soon!",
+                        description: "Community creation feature will be available soon.",
+                      });
+                    }}
+                  >
                     <Plus className="w-4 h-4 mr-2" />
-                    Create New Community (Coming Soon)
+                    Create New Community
                   </Button>
                   <Button className="w-full justify-start" variant="outline" asChild>
                     <a href="/search">
@@ -326,9 +380,17 @@ const Dashboard = () => {
                       Browse Communities
                     </a>
                   </Button>
-                  <Button className="w-full justify-start" variant="outline" disabled>
-                    <UserPlus className="w-4 h-4 mr-2" />
-                    Invite Friends (Coming Soon)
+                  <Button 
+                    className="w-full justify-start" 
+                    variant="outline" 
+                    onClick={handleInviteFriends}
+                  >
+                    {inviteCopied ? (
+                      <CheckCircle className="w-4 h-4 mr-2 text-green-500" />
+                    ) : (
+                      <Share2 className="w-4 h-4 mr-2" />
+                    )}
+                    {inviteCopied ? "Copied!" : "Invite Friends"}
                   </Button>
                 </CardContent>
               </Card>
