@@ -24,17 +24,17 @@ const Navigation = () => {
   return (
     <nav className="bg-background/95 backdrop-blur-md border-b border-border sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <Link to="/" className="flex items-center space-x-3">
+        <div className="flex justify-between items-center h-20">
+          {/* Logo - Moved further left with increased size */}
+          <Link to="/" className="flex items-center space-x-4 mr-8">
             <img 
               src="/lovable-uploads/6c5c7043-4203-46aa-b99f-b705da559ade.png" 
               alt="RemnantHub Logo" 
-              className="w-12 h-12"
+              className="w-16 h-16"
             />
-            <div>
-              <h1 className="text-xl font-bold text-foreground">RemnantHub</h1>
-              <p className="text-xs text-muted-foreground hidden sm:block">
+            <div className="flex flex-col">
+              <h1 className="text-2xl font-bold text-foreground leading-tight">RemnantHub</h1>
+              <p className="text-sm text-muted-foreground hidden sm:block leading-tight">
                 Connecting Authentic Christian Communities
               </p>
             </div>
