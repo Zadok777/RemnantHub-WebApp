@@ -30,7 +30,7 @@ const Navigation = () => {
             <img 
               src="/lovable-uploads/6c5c7043-4203-46aa-b99f-b705da559ade.png" 
               alt="RemnantHub Logo" 
-              className="w-8 h-8 flex-shrink-0"
+              className="w-9 h-9 flex-shrink-0 mix-blend-multiply dark:mix-blend-screen"
             />
             <div className="min-w-0">
               <h1 className="text-sm font-bold text-foreground leading-tight">RemnantHub</h1>
