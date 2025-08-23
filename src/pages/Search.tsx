@@ -1,0 +1,189 @@
+import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { MapPin, Users, Clock, Star, Filter, Search as SearchIcon } from 'lucide-react';
+import { mockCommunities } from '@/data/mockData';
+import { Link } from 'react-router-dom';
+
+const Search = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
+
+  const getTrustLevelColor = (level: string) => {
+    switch (level) {
+      case 'New': return 'bg-blue-100 text-blue-800';
+      case 'Established': return 'bg-green-100 text-green-800';
+      case 'Verified': return 'bg-primary/10 text-primary';
+      case 'Endorsed': return 'bg-purple-100 text-purple-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
+            Find Your Community
+          </h1>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            Discover authentic house church communities in your area where believers gather for fellowship, teaching, and breaking bread together.
+          </p>
+        </div>
+
+        {/* Search Bar */}
+        <div className="community-card max-w-4xl mx-auto mb-8">
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex-1 relative">
+              <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
+              <Input
+                placeholder="Search by location, community name, or keywords..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 h-12"
+              />
+            </div>
+            <Button 
+              variant="outline" 
+              onClick={() => setShowFilters(!showFilters)}
+              className="h-12 px-6"
+            >
+              <Filter className="w-4 h-4 mr-2" />
+              Filters
+            </Button>
+            <Button className="h-12 px-8">
+              <MapPin className="w-4 h-4 mr-2" />
+              Find Near Me
+            </Button>
+          </div>
+        </div>
+
+        {/* Results */}
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Filters Sidebar */}
+          <div className={`lg:col-span-1 ${showFilters ? 'block' : 'hidden lg:block'}`}>
+            <div className="community-card sticky top-20">
+              <h3 className="text-xl font-semibold mb-6">Filter Communities</h3>
+              
+              <div className="space-y-6">
+                <div>
+                  <h4 className="font-medium mb-3">Trust Level</h4>
+                  <div className="space-y-2">
+                    {['New', 'Established', 'Verified', 'Endorsed'].map((level) => (
+                      <label key={level} className="flex items-center space-x-2">
+                        <input type="checkbox" className="rounded" />
+                        <Badge className={getTrustLevelColor(level)}>{level}</Badge>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="font-medium mb-3">Meeting Day</h4>
+                  <div className="space-y-2">
+                    {['Sunday', 'Wednesday', 'Saturday'].map((day) => (
+                      <label key={day} className="flex items-center space-x-2">
+                        <input type="checkbox" className="rounded" />
+                        <span className="text-sm">{day}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="font-medium mb-3">Community Features</h4>
+                  <div className="space-y-2">
+                    {['Family-friendly', 'Bible Study', 'Contemporary Worship', 'Traditional Worship'].map((feature) => (
+                      <label key={feature} className="flex items-center space-x-2">
+                        <input type="checkbox" className="rounded" />
+                        <span className="text-sm">{feature}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Community Cards */}
+          <div className="lg:col-span-2">
+            <div className="flex justify-between items-center mb-6">
+              <p className="text-muted-foreground">
+                Found {mockCommunities.length} communities in Austin, TX
+              </p>
+            </div>
+
+            <div className="space-y-6">
+              {mockCommunities.map((community) => (
+                <Card key={community.id} className="community-card hover:shadow-xl transition-all duration-300">
+                  <CardHeader>
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <CardTitle className="text-xl">{community.name}</CardTitle>
+                        <CardDescription className="flex items-center mt-2">
+                          <MapPin className="w-4 h-4 mr-1" />
+                          {community.location.city}, {community.location.state}
+                        </CardDescription>
+                      </div>
+                      <Badge className={getTrustLevelColor(community.trustLevel)}>
+                        {community.trustLevel}
+                      </Badge>
+                    </div>
+                  </CardHeader>
+
+                  <CardContent>
+                    <p className="text-muted-foreground mb-4 line-clamp-2">
+                      {community.description}
+                    </p>
+
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {community.tags.slice(0, 3).map((tag) => (
+                        <Badge key={tag} variant="secondary" className="text-xs">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+
+                    <div className="flex justify-between items-center text-sm text-muted-foreground mb-4">
+                      <div className="flex items-center">
+                        <Users className="w-4 h-4 mr-1" />
+                        {community.members} members
+                      </div>
+                      <div className="flex items-center">
+                        <Clock className="w-4 h-4 mr-1" />
+                        {community.meetingDay}s at {community.meetingTime}
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <Button className="flex-1" asChild>
+                        <Link to={`/community/${community.id}`}>
+                          View Details
+                        </Link>
+                      </Button>
+                      <Button variant="outline" className="flex-1">
+                        Contact Leader
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
+            {/* Load More */}
+            <div className="text-center mt-12">
+              <Button variant="outline" size="lg">
+                Load More Communities
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Search;
