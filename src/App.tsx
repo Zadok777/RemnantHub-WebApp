@@ -10,6 +10,7 @@ import Search from "./pages/Search";
 import Features from "./pages/Features";
 import About from "./pages/About";
 import Donate from "./pages/Donate";
+import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
               <Route path="/features" element={<Features />} />
               <Route path="/about" element={<About />} />
               <Route path="/donate" element={<Donate />} />
+              <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/signin" element={<div className="min-h-screen flex items-center justify-center"><h1 className="text-2xl">Sign In - Coming Soon</h1></div>} />
               <Route path="/signup" element={<div className="min-h-screen flex items-center justify-center"><h1 className="text-2xl">Sign Up - Coming Soon</h1></div>} />
               <Route path="*" element={<NotFound />} />
