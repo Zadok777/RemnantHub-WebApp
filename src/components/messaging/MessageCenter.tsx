@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,9 +14,12 @@ import {
   Circle,
   CheckCircle2,
   Users,
-  Filter
+  Filter,
+  Loader2
 } from 'lucide-react';
-import { mockMessages, mockCommunities, mockUsers } from '@/data/mockData';
+import { useCommunities } from '@/hooks/useCommunities';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 
 interface MessageCenterProps {
   defaultTab?: string;
@@ -27,16 +30,29 @@ const MessageCenter: React.FC<MessageCenterProps> = ({ defaultTab = 'conversatio
   const [newMessage, setNewMessage] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState(defaultTab);
+  const [conversations, setConversations] = useState<Record<string, any[]>>({});
+  const [loading, setLoading] = useState(true);
+  
+  const { user } = useAuth();
+  const { communities } = useCommunities();
 
-  // Group messages by conversation
-  const conversations = mockMessages.reduce((acc, message) => {
-    const otherUserId = message.fromUserId === '1' ? message.toUserId : message.fromUserId;
-    if (!acc[otherUserId]) {
-      acc[otherUserId] = [];
-    }
-    acc[otherUserId].push(message);
-    return acc;
-  }, {} as Record<string, typeof mockMessages>);
+  // Load real conversations from database
+  useEffect(() => {
+    const loadConversations = async () => {
+      if (!user) return;
+      
+      try {
+        // For now, show empty state since real messaging system needs implementation
+        setConversations({});
+        setLoading(false);
+      } catch (error) {
+        console.error('Error loading conversations:', error);
+        setLoading(false);
+      }
+    };
+
+    loadConversations();
+  }, [user]);
 
   const handleSendMessage = () => {
     if (newMessage.trim() && selectedConversation) {
@@ -82,50 +98,60 @@ const MessageCenter: React.FC<MessageCenterProps> = ({ defaultTab = 'conversatio
               </div>
 
               <div className="flex-1 overflow-y-auto">
-                {Object.entries(conversations).map(([userId, messages]) => {
-                  const lastMessage = messages[messages.length - 1];
-                  const user = mockUsers.find(u => u.id === userId);
-                  const community = mockCommunities.find(c => c.id === lastMessage.communityId);
-                  
-                  return (
-                    <div
-                      key={userId}
-                      className={`p-4 border-b cursor-pointer hover:bg-secondary/50 transition-colors ${
-                        selectedConversation === userId ? 'bg-secondary' : ''
-                      }`}
-                      onClick={() => setSelectedConversation(userId)}
-                    >
-                      <div className="flex items-start space-x-3">
-                        <Avatar className="w-10 h-10">
-                          <AvatarFallback>
-                            {user?.name?.split(' ').map(n => n[0]).join('') || 'U'}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between">
-                            <p className="font-medium text-sm truncate">
-                              {user?.name || 'Unknown User'}
-                            </p>
-                            <div className="flex items-center space-x-1">
-                              <span className="text-xs text-muted-foreground">
-                                {formatTime(lastMessage.timestamp)}
-                              </span>
-                              {!lastMessage.read && (
-                                <Circle className="w-2 h-2 fill-primary text-primary" />
-                              )}
+                {loading ? (
+                  <div className="p-4 text-center">
+                    <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2" />
+                    <p className="text-sm text-muted-foreground">Loading conversations...</p>
+                  </div>
+                ) : Object.keys(conversations).length === 0 ? (
+                  <div className="p-8 text-center">
+                    <MessageSquare className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                    <p className="text-lg font-medium text-muted-foreground mb-2">
+                      No conversations yet
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      Connect with community members to start messaging
+                    </p>
+                  </div>
+                ) : (
+                  Object.entries(conversations).map(([userId, messages]) => {
+                    const lastMessage = messages[messages.length - 1];
+                    
+                    return (
+                      <div
+                        key={userId}
+                        className={`p-4 border-b cursor-pointer hover:bg-secondary/50 transition-colors ${
+                          selectedConversation === userId ? 'bg-secondary' : ''
+                        }`}
+                        onClick={() => setSelectedConversation(userId)}
+                      >
+                        <div className="flex items-start space-x-3">
+                          <Avatar className="w-10 h-10">
+                            <AvatarFallback>U</AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between">
+                              <p className="font-medium text-sm truncate">
+                                User
+                              </p>
+                              <div className="flex items-center space-x-1">
+                                <span className="text-xs text-muted-foreground">
+                                  {formatTime(lastMessage.timestamp)}
+                                </span>
+                                {!lastMessage.read && (
+                                  <Circle className="w-2 h-2 fill-primary text-primary" />
+                                )}
+                              </div>
                             </div>
+                            <p className="text-sm text-muted-foreground truncate">
+                              {lastMessage.content}
+                            </p>
                           </div>
-                          {community && (
-                            <p className="text-xs text-primary mb-1">{community.name}</p>
-                          )}
-                          <p className="text-sm text-muted-foreground truncate">
-                            {lastMessage.content}
-                          </p>
                         </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })
+                )}
               </div>
             </div>
 
@@ -137,15 +163,11 @@ const MessageCenter: React.FC<MessageCenterProps> = ({ defaultTab = 'conversatio
                   <div className="p-4 border-b flex items-center justify-between">
                     <div className="flex items-center space-x-3">
                       <Avatar className="w-8 h-8">
-                        <AvatarFallback>
-                          {mockUsers.find(u => u.id === selectedConversation)?.name?.split(' ').map(n => n[0]).join('') || 'U'}
-                        </AvatarFallback>
+                        <AvatarFallback>U</AvatarFallback>
                       </Avatar>
                       <div>
-                        <p className="font-medium">
-                          {mockUsers.find(u => u.id === selectedConversation)?.name || 'Unknown User'}
-                        </p>
-                        <p className="text-xs text-muted-foreground">Online</p>
+                        <p className="font-medium">User</p>
+                        <p className="text-xs text-muted-foreground">Offline</p>
                       </div>
                     </div>
                     <Button variant="outline" size="sm">
@@ -230,27 +252,39 @@ const MessageCenter: React.FC<MessageCenterProps> = ({ defaultTab = 'conversatio
               </div>
               
               <div className="space-y-3">
-                {mockCommunities.map((community) => (
-                  <Card key={community.id} className="community-card">
-                    <CardHeader className="pb-3">
-                      <div className="flex items-center justify-between">
-                        <CardTitle className="text-base">{community.name}</CardTitle>
-                        <Badge variant="secondary" className="text-xs">
-                          {community.members} members
-                        </Badge>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="pt-0">
-                      <p className="text-sm text-muted-foreground mb-3">
-                        Connect with {community.leader.name} and other community members
-                      </p>
-                      <Button size="sm" className="w-full">
-                        <MessageSquare className="w-4 h-4 mr-2" />
-                        Start Conversation
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))}
+                {communities.length === 0 ? (
+                  <div className="p-8 text-center">
+                    <Users className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                    <p className="text-lg font-medium text-muted-foreground mb-2">
+                      No communities yet
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      Join communities to start group conversations
+                    </p>
+                  </div>
+                ) : (
+                  communities.map((community) => (
+                    <Card key={community.id} className="community-card">
+                      <CardHeader className="pb-3">
+                        <div className="flex items-center justify-between">
+                          <CardTitle className="text-base">{community.name}</CardTitle>
+                          <Badge variant="secondary" className="text-xs">
+                            {community.member_count} members
+                          </Badge>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="pt-0">
+                        <p className="text-sm text-muted-foreground mb-3">
+                          Connect with community members in {community.location_city}, {community.location_state}
+                        </p>
+                        <Button size="sm" className="w-full">
+                          <MessageSquare className="w-4 h-4 mr-2" />
+                          Start Conversation
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  ))
+                )}
               </div>
             </div>
           </TabsContent>
