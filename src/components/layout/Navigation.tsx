@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Home, Search, Zap, Info, Heart, User, UserPlus } from 'lucide-react';
+import { Menu, X, Home, Search, Zap, Info, Heart, User, UserPlus, LogOut, Settings } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const { user, loading, signOut } = useAuth();
 
   const navigation = [
     { name: 'Home', href: '/', icon: Home },
@@ -61,18 +63,40 @@ const Navigation = () => {
           {/* Auth Buttons */}
           <div className="hidden md:flex items-center space-x-4">
             <ThemeToggle />
-            <Button variant="ghost" size="sm" asChild>
-              <Link to="/signin" className="flex items-center space-x-2">
-                <User className="w-4 h-4" />
-                <span>Sign In</span>
-              </Link>
-            </Button>
-            <Button size="sm" asChild>
-              <Link to="/signup" className="flex items-center space-x-2">
-                <UserPlus className="w-4 h-4" />
-                <span>Sign Up</span>
-              </Link>
-            </Button>
+            {loading ? (
+              <div className="w-20 h-8 bg-muted rounded animate-pulse" />
+            ) : user ? (
+              <>
+                <span className="text-sm text-muted-foreground">
+                  Welcome, {user.user_metadata?.display_name || user.email}
+                </span>
+                <Button variant="ghost" size="sm" asChild>
+                  <Link to="/dashboard" className="flex items-center space-x-2">
+                    <Settings className="w-4 h-4" />
+                    <span>Dashboard</span>
+                  </Link>
+                </Button>
+                <Button variant="outline" size="sm" onClick={signOut}>
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Sign Out
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="ghost" size="sm" asChild>
+                  <Link to="/auth" className="flex items-center space-x-2">
+                    <User className="w-4 h-4" />
+                    <span>Sign In</span>
+                  </Link>
+                </Button>
+                <Button size="sm" asChild>
+                  <Link to="/auth" className="flex items-center space-x-2">
+                    <UserPlus className="w-4 h-4" />
+                    <span>Sign Up</span>
+                  </Link>
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -111,18 +135,43 @@ const Navigation = () => {
               );
             })}
             <div className="border-t border-border pt-4 mt-4 space-y-2">
-              <Button variant="ghost" className="w-full justify-start" asChild>
-                <Link to="/signin" onClick={() => setIsOpen(false)}>
-                  <User className="w-4 h-4 mr-2" />
-                  Sign In
-                </Link>
-              </Button>
-              <Button className="w-full justify-start" asChild>
-                <Link to="/signup" onClick={() => setIsOpen(false)}>
-                  <UserPlus className="w-4 h-4 mr-2" />
-                  Sign Up
-                </Link>
-              </Button>
+              {loading ? (
+                <div className="w-full h-8 bg-muted rounded animate-pulse" />
+              ) : user ? (
+                <>
+                  <p className="text-sm text-muted-foreground px-3">
+                    Welcome, {user.user_metadata?.display_name || user.email}
+                  </p>
+                  <Button variant="ghost" className="w-full justify-start" asChild>
+                    <Link to="/dashboard" onClick={() => setIsOpen(false)}>
+                      <Settings className="w-4 h-4 mr-2" />
+                      Dashboard
+                    </Link>
+                  </Button>
+                  <Button variant="outline" className="w-full justify-start" onClick={() => {
+                    setIsOpen(false);
+                    signOut();
+                  }}>
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Sign Out
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button variant="ghost" className="w-full justify-start" asChild>
+                    <Link to="/auth" onClick={() => setIsOpen(false)}>
+                      <User className="w-4 h-4 mr-2" />
+                      Sign In
+                    </Link>
+                  </Button>
+                  <Button className="w-full justify-start" asChild>
+                    <Link to="/auth" onClick={() => setIsOpen(false)}>
+                      <UserPlus className="w-4 h-4 mr-2" />
+                      Sign Up
+                    </Link>
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>
