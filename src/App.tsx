@@ -21,6 +21,7 @@ import TermsOfService from "./pages/TermsOfService";
 import CookiePolicy from "./pages/CookiePolicy";
 import DataRights from "./pages/DataRights";
 import ReportContent from "./pages/ReportContent";
+import CommunityGuidelines from "./pages/CommunityGuidelines";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -52,6 +53,7 @@ const App = () => (
               <Route path="/cookies" element={<CookiePolicy />} />
               <Route path="/data-rights" element={<DataRights />} />
               <Route path="/report" element={<ReportContent />} />
+              <Route path="/community-guidelines" element={<CommunityGuidelines />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             </Layout>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
@@ -32,10 +33,6 @@ const FAQ = () => {
         {
           question: "How do I find communities near me?",
           answer: "Use our Search page to find communities in your area. You can filter by location, meeting days, community type, and other preferences. The interactive map shows communities visually, and you can click 'Find Near Me' to see the closest options."
-        },
-        {
-          question: "What types of communities are available?",
-          answer: "We host various types of Christian communities including Bible study groups, prayer groups, youth ministries, family fellowships, ministry teams, and denominational gatherings. Each community has different focuses and meeting schedules."
         },
         {
           question: "How do I join a community?",
@@ -149,8 +146,8 @@ const FAQ = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button variant="outline" className="w-full">
-              View Guidelines
+            <Button variant="outline" className="w-full" asChild>
+              <Link to="/community-guidelines">View Guidelines</Link>
             </Button>
           </CardContent>
         </Card>
