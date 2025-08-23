@@ -4,9 +4,10 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
-import { MapPin, Users, Clock, Star, Filter, Search as SearchIcon } from 'lucide-react';
+import { MapPin, Users, Clock, Star, Filter, Search as SearchIcon, Navigation } from 'lucide-react';
 import { mockCommunities, Community } from '@/data/mockData';
 import { Link } from 'react-router-dom';
+import { useLocation, calculateDistance } from '@/hooks/useLocation';
 
 const Search = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -14,6 +15,7 @@ const Search = () => {
   const [selectedTrustLevels, setSelectedTrustLevels] = useState<string[]>([]);
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
   const [selectedFeatures, setSelectedFeatures] = useState<string[]>([]);
+  const { location, getCurrentLocation, loading: locationLoading } = useLocation();
 
   // Filter and search logic
   const filteredCommunities = useMemo(() => {
@@ -109,9 +111,13 @@ const Search = () => {
               <Filter className="w-4 h-4 mr-2" />
               Filters
             </Button>
-            <Button className="h-12 px-8">
-              <MapPin className="w-4 h-4 mr-2" />
-              Find Near Me
+            <Button 
+              onClick={getCurrentLocation}
+              disabled={locationLoading}
+              className="h-12 px-8"
+            >
+              <Navigation className="w-4 h-4 mr-2" />
+              {locationLoading ? 'Finding...' : 'Find Near Me'}
             </Button>
           </div>
         </div>
@@ -181,7 +187,8 @@ const Search = () => {
           <div className="lg:col-span-2">
             <div className="flex justify-between items-center mb-6">
               <p className="text-muted-foreground">
-                Found {filteredCommunities.length} communities in Austin, TX
+                Found {filteredCommunities.length} communities
+                {location && ' near you'}
               </p>
               {(selectedTrustLevels.length > 0 || selectedDays.length > 0 || selectedFeatures.length > 0 || searchTerm) && (
                 <Button 
@@ -239,6 +246,17 @@ const Search = () => {
                         <Clock className="w-4 h-4 mr-1" />
                         {community.meetingDay}s at {community.meetingTime}
                       </div>
+                      {location && (
+                        <div className="flex items-center">
+                          <MapPin className="w-4 h-4 mr-1" />
+                          {calculateDistance(
+                            location.latitude,
+                            location.longitude,
+                            community.location.lat,
+                            community.location.lng
+                          )} mi
+                        </div>
+                      )}
                     </div>
 
                     <div className="flex flex-col sm:flex-row gap-3">

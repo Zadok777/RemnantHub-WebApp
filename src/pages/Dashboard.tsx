@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import MessageCenter from '@/components/messaging/MessageCenter';
 import { 
   User, 
   MapPin, 
@@ -20,7 +21,8 @@ import {
   Church,
   Plus,
   Eye,
-  UserPlus
+  UserPlus,
+  MessageSquare
 } from 'lucide-react';
 
 const Dashboard = () => {
@@ -90,10 +92,11 @@ const Dashboard = () => {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="profile">Profile</TabsTrigger>
             <TabsTrigger value="communities">Communities</TabsTrigger>
+            <TabsTrigger value="messages">Messages</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
 
@@ -370,6 +373,25 @@ const Dashboard = () => {
           </TabsContent>
 
           {/* Settings Tab */}
+          <TabsContent value="messages" className="space-y-6">
+            <div className="community-card">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold">Messages</h2>
+                  <p className="text-muted-foreground">
+                    Connect with community leaders and members
+                  </p>
+                </div>
+                <Button>
+                  <MessageSquare className="w-4 h-4 mr-2" />
+                  New Message
+                </Button>
+              </div>
+              
+              <MessageCenter />
+            </div>
+          </TabsContent>
+
           <TabsContent value="settings" className="space-y-6">
             <Card className="community-card">
               <CardHeader>
