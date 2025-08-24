@@ -31,7 +31,7 @@ export type Database = {
           member_count: number | null
           name: string
           tags: string[] | null
-          trust_level: string
+          trust_level: string | null
           updated_at: string
         }
         Insert: {
@@ -50,7 +50,7 @@ export type Database = {
           member_count?: number | null
           name: string
           tags?: string[] | null
-          trust_level?: string
+          trust_level?: string | null
           updated_at?: string
         }
         Update: {
@@ -69,7 +69,7 @@ export type Database = {
           member_count?: number | null
           name?: string
           tags?: string[] | null
-          trust_level?: string
+          trust_level?: string | null
           updated_at?: string
         }
         Relationships: []
