@@ -48,7 +48,8 @@ const Search = () => {
   }, [searchTerm, selectedTrustLevels, selectedDays, selectedFeatures, communities]);
 
   const getTrustLevelColor = (level: string) => {
-    switch (level) {
+    const lowerLevel = level.toLowerCase();
+    switch (lowerLevel) {
       case 'new': return 'bg-blue-100 text-blue-800';
       case 'established': return 'bg-green-100 text-green-800';
       case 'verified': return 'bg-primary/10 text-primary';
@@ -174,7 +175,7 @@ const Search = () => {
                 <div>
                   <h4 className="font-medium mb-3">Trust Level</h4>
                   <div className="space-y-2">
-                    {['new', 'established', 'verified', 'endorsed'].map((level) => (
+                    {['New', 'Established', 'Verified', 'Endorsed'].map((level) => (
                       <div key={level} className="flex items-center space-x-2">
                         <Checkbox 
                           id={`trust-${level}`}
@@ -182,7 +183,7 @@ const Search = () => {
                           onCheckedChange={(checked) => handleTrustLevelChange(level, checked as boolean)}
                         />
                         <label htmlFor={`trust-${level}`} className="cursor-pointer">
-                          <Badge className={getTrustLevelColor(level)}>{level.charAt(0).toUpperCase() + level.slice(1)}</Badge>
+                          <Badge className={getTrustLevelColor(level)}>{level}</Badge>
                         </label>
                       </div>
                     ))}
@@ -264,7 +265,7 @@ const Search = () => {
                         </CardDescription>
                       </div>
                       <Badge className={getTrustLevelColor(community.trust_level)}>
-                        {community.trust_level.charAt(0).toUpperCase() + community.trust_level.slice(1)}
+                        {community.trust_level}
                       </Badge>
                     </div>
                   </CardHeader>

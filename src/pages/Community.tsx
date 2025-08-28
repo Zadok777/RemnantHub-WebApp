@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,14 +18,56 @@ import {
   Shield,
   Camera
 } from 'lucide-react';
-import { mockCommunities } from '@/data/mockData';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+import { useCommunities } from '@/hooks/useCommunities';
 
 const Community = () => {
   const { id } = useParams();
   const [isFavorited, setIsFavorited] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [community, setCommunity] = useState<any>(null);
+  const { toast } = useToast();
   
-  const community = mockCommunities.find(c => c.id === id);
+  useEffect(() => {
+    const loadCommunity = async () => {
+      if (!id) return;
+      
+      try {
+        const { data, error } = await supabase
+          .from('communities')
+          .select('*')
+          .eq('id', id)
+          .single();
+          
+        if (error) throw error;
+        setCommunity(data);
+      } catch (error) {
+        console.error('Error loading community:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load community details",
+          variant: "destructive"
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadCommunity();
+  }, [id, toast]);
   
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading community details...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!community) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20 flex items-center justify-center">
@@ -59,33 +101,33 @@ const Community = () => {
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-4">
                 <h1 className="text-3xl lg:text-4xl font-bold text-foreground">{community.name}</h1>
-                <Badge className={getTrustLevelColor(community.trustLevel)}>
+                <Badge className={getTrustLevelColor(community.trust_level)}>
                   <Shield className="w-4 h-4 mr-1" />
-                  {community.trustLevel}
+                  {community.trust_level}
                 </Badge>
               </div>
               
               <div className="flex flex-wrap items-center gap-4 text-muted-foreground mb-4">
                 <div className="flex items-center">
                   <MapPin className="w-4 h-4 mr-1" />
-                  {community.location.city}, {community.location.state}
+                  {community.location_city}, {community.location_state}
                 </div>
                 <div className="flex items-center">
                   <Users className="w-4 h-4 mr-1" />
-                  {community.members} members
+                  {community.member_count} members
                 </div>
                 <div className="flex items-center">
                   <Clock className="w-4 h-4 mr-1" />
-                  {community.meetingDay}s at {community.meetingTime}
+                  {community.meeting_day}s at {community.meeting_time}
                 </div>
                 <div className="flex items-center">
                   <Calendar className="w-4 h-4 mr-1" />
-                  Founded {community.founded}
+                  Est. {new Date(community.created_at).getFullYear()}
                 </div>
               </div>
 
               <div className="flex flex-wrap gap-2">
-                {community.tags.map((tag) => (
+                {community.tags && community.tags.map((tag: string) => (
                   <Badge key={tag} variant="secondary">{tag}</Badge>
                 ))}
               </div>
@@ -139,26 +181,34 @@ const Community = () => {
                     
                     <div className="grid md:grid-cols-2 gap-6">
                       <div>
-                        <h4 className="font-semibold mb-3">Age Groups We Serve</h4>
+                        <h4 className="font-semibold mb-3">Meeting Information</h4>
                         <div className="space-y-2">
-                          {community.ageGroups.map((group) => (
-                            <div key={group} className="flex items-center">
-                              <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
-                              <span className="text-sm">{group}</span>
-                            </div>
-                          ))}
+                          <div className="flex items-center">
+                            <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
+                            <span className="text-sm">{community.meeting_day}s at {community.meeting_time}</span>
+                          </div>
+                          <div className="flex items-center">
+                            <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
+                            <span className="text-sm">Max capacity: {community.max_capacity || 'Not specified'}</span>
+                          </div>
                         </div>
                       </div>
                       
                       <div>
-                        <h4 className="font-semibold mb-3">Our Ministries</h4>
+                        <h4 className="font-semibold mb-3">Contact Information</h4>
                         <div className="space-y-2">
-                          {community.ministries.map((ministry) => (
-                            <div key={ministry} className="flex items-center">
+                          {community.contact_info?.email && (
+                            <div className="flex items-center">
                               <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
-                              <span className="text-sm">{ministry}</span>
+                              <span className="text-sm">{community.contact_info.email}</span>
                             </div>
-                          ))}
+                          )}
+                          {community.contact_info?.denomination && (
+                            <div className="flex items-center">
+                              <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
+                              <span className="text-sm">{community.contact_info.denomination}</span>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -171,21 +221,18 @@ const Community = () => {
                   <CardHeader>
                     <CardTitle>Leadership Team</CardTitle>
                     <CardDescription>
-                      Meet the leaders who shepherd our community
+                      Contact the leadership for more information
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="flex items-start space-x-4">
-                      <Avatar className="w-20 h-20">
-                        <AvatarImage src={community.leader.photo} alt={community.leader.name} />
-                        <AvatarFallback>
-                          {community.leader.name.split(' ').map(n => n[0]).join('')}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1">
-                        <h3 className="text-xl font-semibold mb-2">{community.leader.name}</h3>
-                        <p className="text-muted-foreground leading-relaxed">{community.leader.bio}</p>
-                      </div>
+                    <div className="space-y-4">
+                      <p className="text-muted-foreground">
+                        For leadership information and contact details, please reach out through the contact form.
+                      </p>
+                      <Button className="w-full">
+                        <MessageSquare className="w-4 h-4 mr-2" />
+                        Contact Community Leader
+                      </Button>
                     </div>
                   </CardContent>
                 </Card>
@@ -200,16 +247,9 @@ const Community = () => {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      {community.photos.map((photo, index) => (
-                        <div key={index} className="aspect-video bg-muted rounded-lg overflow-hidden">
-                          <img 
-                            src={photo} 
-                            alt={`${community.name} photo ${index + 1}`}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                      ))}
+                    <div className="text-center py-8">
+                      <Camera className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                      <p className="text-muted-foreground">Photos will be available once uploaded by the community leader.</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -225,19 +265,19 @@ const Community = () => {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="p-4 bg-secondary/20 rounded-lg">
-                      <p className="font-medium">{community.location.address}</p>
-                      <p className="text-muted-foreground">{community.location.city}, {community.location.state}</p>
+                      <p className="font-medium">{community.location_city}, {community.location_state}</p>
+                      <p className="text-muted-foreground">Contact for specific address details</p>
                     </div>
                     
                     <div className="grid md:grid-cols-2 gap-4">
                       <div className="p-4 bg-secondary/20 rounded-lg">
                         <h4 className="font-medium mb-2">Meeting Time</h4>
-                        <p className="text-muted-foreground">{community.meetingDay}s at {community.meetingTime}</p>
+                        <p className="text-muted-foreground">{community.meeting_day}s at {community.meeting_time}</p>
                       </div>
                       
                       <div className="p-4 bg-secondary/20 rounded-lg">
                         <h4 className="font-medium mb-2">Community Size</h4>
-                        <p className="text-muted-foreground">{community.members} regular members</p>
+                        <p className="text-muted-foreground">{community.member_count} members</p>
                       </div>
                     </div>
 
@@ -284,11 +324,11 @@ const Community = () => {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <Shield className="w-5 h-5 mr-2" />
-                  Trust Level: {community.trustLevel}
+                  Trust Level: {community.trust_level}
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                {community.trustLevel === 'Verified' && (
+                {community.trust_level === 'Verified' && (
                   <div className="space-y-3">
                     <div className="flex items-center text-sm">
                       <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
@@ -304,26 +344,37 @@ const Community = () => {
                     </div>
                   </div>
                 )}
+                {community.trust_level === 'New' && (
+                  <div className="space-y-3">
+                    <div className="flex items-center text-sm">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                      Recently created community
+                    </div>
+                    <div className="flex items-center text-sm">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                      Verification in progress
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
-            {/* Similar Communities */}
+            {/* Actions */}
             <Card className="community-card">
               <CardHeader>
-                <CardTitle>Similar Communities</CardTitle>
+                <CardTitle>Get Connected</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                {mockCommunities.filter(c => c.id !== community.id).slice(0, 2).map((similar) => (
-                  <div key={similar.id} className="p-3 bg-secondary/20 rounded-lg">
-                    <h4 className="font-medium text-sm mb-1">{similar.name}</h4>
-                    <p className="text-xs text-muted-foreground mb-2">
-                      {similar.location.city}, {similar.location.state}
-                    </p>
-                    <Button size="sm" variant="outline" className="w-full" asChild>
-                      <Link to={`/community/${similar.id}`}>View Details</Link>
-                    </Button>
-                  </div>
-                ))}
+                <Button className="w-full" asChild>
+                  <Link to="/search">
+                    Explore More Communities
+                  </Link>
+                </Button>
+                <Button variant="outline" className="w-full" asChild>
+                  <Link to="/prayer-requests">
+                    View Prayer Requests
+                  </Link>
+                </Button>
               </CardContent>
             </Card>
           </div>

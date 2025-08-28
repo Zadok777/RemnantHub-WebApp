@@ -58,7 +58,7 @@ const CreateCommunity = () => {
         meeting_time: formData.meeting_time,
         max_capacity: formData.capacity ? parseInt(formData.capacity) : null,
         leader_id: user.id,
-        trust_level: 'new', // Default trust level for new communities
+        trust_level: 'New', // Default trust level for new communities
         contact_info: {
           email: formData.contact_email,
           denomination: formData.denomination,
