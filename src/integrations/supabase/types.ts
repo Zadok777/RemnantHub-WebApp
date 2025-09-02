@@ -88,7 +88,9 @@ export type Database = {
         Row: {
           contact_info: Json | null
           created_at: string
+          custom_beliefs_summary: string | null
           description: string | null
+          doctrinal_statement_id: string | null
           id: string
           leader_id: string
           location_city: string
@@ -107,7 +109,9 @@ export type Database = {
         Insert: {
           contact_info?: Json | null
           created_at?: string
+          custom_beliefs_summary?: string | null
           description?: string | null
+          doctrinal_statement_id?: string | null
           id?: string
           leader_id: string
           location_city: string
@@ -126,7 +130,9 @@ export type Database = {
         Update: {
           contact_info?: Json | null
           created_at?: string
+          custom_beliefs_summary?: string | null
           description?: string | null
+          doctrinal_statement_id?: string | null
           id?: string
           leader_id?: string
           location_city?: string
@@ -142,7 +148,15 @@ export type Database = {
           trust_level?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "communities_doctrinal_statement_id_fkey"
+            columns: ["doctrinal_statement_id"]
+            isOneToOne: false
+            referencedRelation: "doctrinal_statements"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       community_assignments: {
         Row: {
@@ -225,6 +239,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      doctrinal_statements: {
+        Row: {
+          category: string
+          created_at: string
+          created_by: string | null
+          full_text: string
+          id: string
+          is_predefined: boolean | null
+          name: string
+          summary: string | null
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          full_text: string
+          id?: string
+          is_predefined?: boolean | null
+          name: string
+          summary?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          full_text?: string
+          id?: string
+          is_predefined?: boolean | null
+          name?: string
+          summary?: string | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       leader_verifications: {
         Row: {
@@ -797,6 +847,129 @@ export type Database = {
           name?: string
           region_city?: string | null
           region_state?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      reporting_workflows: {
+        Row: {
+          created_at: string
+          current_step: string
+          formal_report_date: string | null
+          formal_report_submitted: boolean | null
+          id: string
+          issue_description: string
+          private_address_attempted: boolean | null
+          private_address_date: string | null
+          private_address_notes: string | null
+          reported_community_id: string | null
+          reported_user_id: string | null
+          reporter_id: string
+          resolution_notes: string | null
+          resolution_status: string | null
+          updated_at: string
+          witness_brought: boolean | null
+          witness_date: string | null
+          witness_ids: string[] | null
+          witness_notes: string | null
+        }
+        Insert: {
+          created_at?: string
+          current_step?: string
+          formal_report_date?: string | null
+          formal_report_submitted?: boolean | null
+          id?: string
+          issue_description: string
+          private_address_attempted?: boolean | null
+          private_address_date?: string | null
+          private_address_notes?: string | null
+          reported_community_id?: string | null
+          reported_user_id?: string | null
+          reporter_id: string
+          resolution_notes?: string | null
+          resolution_status?: string | null
+          updated_at?: string
+          witness_brought?: boolean | null
+          witness_date?: string | null
+          witness_ids?: string[] | null
+          witness_notes?: string | null
+        }
+        Update: {
+          created_at?: string
+          current_step?: string
+          formal_report_date?: string | null
+          formal_report_submitted?: boolean | null
+          id?: string
+          issue_description?: string
+          private_address_attempted?: boolean | null
+          private_address_date?: string | null
+          private_address_notes?: string | null
+          reported_community_id?: string | null
+          reported_user_id?: string | null
+          reporter_id?: string
+          resolution_notes?: string | null
+          resolution_status?: string | null
+          updated_at?: string
+          witness_brought?: boolean | null
+          witness_date?: string | null
+          witness_ids?: string[] | null
+          witness_notes?: string | null
+        }
+        Relationships: []
+      }
+      resource_library: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          author: string
+          category: string
+          content: string | null
+          created_at: string
+          created_by: string
+          description: string
+          external_url: string | null
+          id: string
+          is_approved: boolean | null
+          recommended_communities: string[] | null
+          resource_type: string
+          tags: string[] | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          author: string
+          category: string
+          content?: string | null
+          created_at?: string
+          created_by: string
+          description: string
+          external_url?: string | null
+          id?: string
+          is_approved?: boolean | null
+          recommended_communities?: string[] | null
+          resource_type?: string
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          author?: string
+          category?: string
+          content?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string
+          external_url?: string | null
+          id?: string
+          is_approved?: boolean | null
+          recommended_communities?: string[] | null
+          resource_type?: string
+          tags?: string[] | null
+          title?: string
           updated_at?: string
         }
         Relationships: []

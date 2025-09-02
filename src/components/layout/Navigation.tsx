@@ -14,6 +14,7 @@ const Navigation = () => {
     { name: 'Home', href: '/', icon: Home },
     { name: 'Find a Gathering', href: '/search', icon: Search },
     { name: 'Prayer', href: '/prayers', icon: Heart },
+    { name: 'Resources', href: '/resources', icon: Zap },
     { name: 'Features', href: '/features', icon: Zap },
     { name: 'About', href: '/about', icon: Info },
     { name: 'Donate', href: '/donate', icon: Heart },

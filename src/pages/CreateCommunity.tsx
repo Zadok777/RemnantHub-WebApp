@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -9,10 +9,11 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Church, MapPin, Calendar, Users, Save, Loader2 } from 'lucide-react';
+import { ArrowLeft, Church, MapPin, Calendar, Users, Save, Loader2, Book } from 'lucide-react';
 
 const CreateCommunity = () => {
   const [loading, setLoading] = useState(false);
+  const [doctrinalStatements, setDoctrinalStatements] = useState<any[]>([]);
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -23,12 +24,32 @@ const CreateCommunity = () => {
     contact_email: '',
     denomination: '',
     capacity: '',
-    additional_info: ''
+    additional_info: '',
+    doctrinal_statement_id: '',
+    custom_beliefs_summary: ''
   });
 
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchDoctrinalStatements();
+  }, []);
+
+  const fetchDoctrinalStatements = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('doctrinal_statements')
+        .select('*')
+        .order('name');
+      
+      if (error) throw error;
+      setDoctrinalStatements(data || []);
+    } catch (error) {
+      console.error('Error fetching doctrinal statements:', error);
+    }
+  };
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -328,6 +349,45 @@ const CreateCommunity = () => {
                       placeholder="e.g., 15"
                       min="1"
                       max="100"
+                    />
+                  </div>
+                </div>
+
+                {/* Beliefs Section */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold flex items-center space-x-2">
+                    <Book className="w-4 h-4" />
+                    <span>Statement of Faith</span>
+                  </h3>
+                  
+                  <div>
+                    <Label htmlFor="doctrinal-statement">Doctrinal Statement (Optional)</Label>
+                    <Select 
+                      value={formData.doctrinal_statement_id} 
+                      onValueChange={(value) => handleInputChange('doctrinal_statement_id', value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a statement of faith" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">No specific statement</SelectItem>
+                        {doctrinalStatements.map((statement) => (
+                          <SelectItem key={statement.id} value={statement.id}>
+                            {statement.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="custom-beliefs">Custom Beliefs Summary (Optional)</Label>
+                    <Textarea
+                      id="custom-beliefs"
+                      value={formData.custom_beliefs_summary}
+                      onChange={(e) => handleInputChange('custom_beliefs_summary', e.target.value)}
+                      placeholder="If you didn't select a predefined statement, briefly describe your community's core beliefs..."
+                      rows={3}
                     />
                   </div>
 
