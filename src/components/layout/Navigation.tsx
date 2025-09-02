@@ -12,7 +12,7 @@ const Navigation = () => {
 
   const navigation = [
     { name: 'Home', href: '/', icon: Home },
-    { name: 'Search', href: '/search', icon: Search },
+    { name: 'Find a Gathering', href: '/search', icon: Search },
     { name: 'Prayer', href: '/prayers', icon: Heart },
     { name: 'Features', href: '/features', icon: Zap },
     { name: 'About', href: '/about', icon: Info },

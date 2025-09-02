@@ -103,8 +103,8 @@ const CreateCommunity = () => {
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back
           </Button>
-          <h1 className="text-4xl font-bold text-foreground mb-2">Create New Community</h1>
-          <p className="text-muted-foreground">Share your house church or fellowship with seekers in your area</p>
+          <h1 className="text-4xl font-bold text-foreground mb-2">Plant a House Church</h1>
+          <p className="text-muted-foreground">Share your ekklēsia gathering or fellowship with seekers in your area</p>
         </div>
 
         <div className="max-w-2xl mx-auto">

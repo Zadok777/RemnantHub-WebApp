@@ -16,8 +16,12 @@ import {
   Calendar,
   BookOpen,
   Shield,
-  Camera
+  Camera,
+  Gift,
+  Book
 } from 'lucide-react';
+import MutualEdification from '@/components/community/MutualEdification';
+import ReadingPlan from '@/components/community/ReadingPlan';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useCommunities } from '@/hooks/useCommunities';
@@ -159,9 +163,19 @@ const Community = () => {
           {/* Main Content */}
           <div className="lg:col-span-2">
             <Tabs defaultValue="about" className="space-y-6">
-              <TabsList className="grid w-full grid-cols-4">
+              <TabsList className="grid w-full grid-cols-6">
                 <TabsTrigger value="about">About</TabsTrigger>
                 <TabsTrigger value="leadership">Leadership</TabsTrigger>
+                <TabsTrigger value="edification">
+                  <Gift className="w-4 h-4 mr-1" />
+                  <span className="hidden sm:inline">Mutual Edification</span>
+                  <span className="sm:hidden">Gifts</span>
+                </TabsTrigger>
+                <TabsTrigger value="reading">
+                  <Book className="w-4 h-4 mr-1" />
+                  <span className="hidden sm:inline">Reading Plans</span>
+                  <span className="sm:hidden">Reading</span>
+                </TabsTrigger>
                 <TabsTrigger value="photos">Photos</TabsTrigger>
                 <TabsTrigger value="location">Location</TabsTrigger>
               </TabsList>
@@ -236,6 +250,20 @@ const Community = () => {
                     </div>
                   </CardContent>
                 </Card>
+              </TabsContent>
+
+              <TabsContent value="edification">
+                <MutualEdification 
+                  communityId={community.id} 
+                  isLeader={false} // TODO: Add logic to check if current user is leader
+                />
+              </TabsContent>
+
+              <TabsContent value="reading">
+                <ReadingPlan 
+                  communityId={community.id} 
+                  isLeader={false} // TODO: Add logic to check if current user is leader
+                />
               </TabsContent>
 
               <TabsContent value="photos">

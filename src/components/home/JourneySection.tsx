@@ -28,15 +28,15 @@ const JourneySection = () => {
               <Search className="w-10 h-10 text-primary" />
             </div>
             <h3 className="text-2xl font-bold text-foreground mb-4">
-              Looking for Community?
+              Looking for a Household of Faith?
             </h3>
             <p className="text-muted-foreground mb-6 leading-relaxed">
-              Find authentic Christian fellowship in your area. Connect with house churches and small groups that align with your spiritual journey.
+              Find authentic Christian fellowship in your area. Connect with house church assemblies and small gatherings that align with your spiritual journey.
             </p>
             <Button size="lg" asChild className="w-full">
               <Link to="/search">
                 <Search className="mr-2 h-5 w-5" />
-                Find Your Community
+                Find a Gathering
               </Link>
             </Button>
             <p className="text-sm text-muted-foreground mt-3">
@@ -50,15 +50,15 @@ const JourneySection = () => {
               <Plus className="w-10 h-10 text-secondary" />
             </div>
             <h3 className="text-2xl font-bold text-foreground mb-4">
-              Leading a House Church?
+              Ready to Host an Ekklēsia?
             </h3>
             <p className="text-muted-foreground mb-6 leading-relaxed">
-              Share your community with seekers in your area. Help others discover the authentic fellowship you've cultivated.
+              Share your gathering with seekers in your area. Help others discover the authentic fellowship you've cultivated in your home.
             </p>
             <Button size="lg" variant="secondary" asChild className="w-full">
               <Link to={user ? "/create-community" : "/auth"}>
                 <Plus className="mr-2 h-5 w-5" />
-                Create New Community
+                Plant a House Church
               </Link>
             </Button>
             <p className="text-sm text-muted-foreground mt-3">

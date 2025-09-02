@@ -74,6 +74,56 @@ export type Database = {
         }
         Relationships: []
       }
+      community_assignments: {
+        Row: {
+          assigned_by: string
+          assigned_to: string | null
+          assignment_type: string
+          community_id: string
+          created_at: string
+          description: string | null
+          id: string
+          scheduled_date: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_by: string
+          assigned_to?: string | null
+          assignment_type: string
+          community_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          scheduled_date?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_by?: string
+          assigned_to?: string | null
+          assignment_type?: string
+          community_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          scheduled_date?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_assignments_community_id_fkey"
+            columns: ["community_id"]
+            isOneToOne: false
+            referencedRelation: "communities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       community_members: {
         Row: {
           community_id: string
@@ -99,6 +149,47 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "community_members_community_id_fkey"
+            columns: ["community_id"]
+            isOneToOne: false
+            referencedRelation: "communities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      member_gifts: {
+        Row: {
+          community_id: string
+          created_at: string
+          description: string | null
+          gift_category: string
+          id: string
+          is_available: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          community_id: string
+          created_at?: string
+          description?: string | null
+          gift_category: string
+          id?: string
+          is_available?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          community_id?: string
+          created_at?: string
+          description?: string | null
+          gift_category?: string
+          id?: string
+          is_available?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "member_gifts_community_id_fkey"
             columns: ["community_id"]
             isOneToOne: false
             referencedRelation: "communities"
@@ -219,6 +310,148 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      reading_discussions: {
+        Row: {
+          comment_text: string
+          created_at: string
+          id: string
+          parent_comment_id: string | null
+          reading_portion_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          comment_text: string
+          created_at?: string
+          id?: string
+          parent_comment_id?: string | null
+          reading_portion_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          comment_text?: string
+          created_at?: string
+          id?: string
+          parent_comment_id?: string | null
+          reading_portion_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reading_discussions_parent_comment_id_fkey"
+            columns: ["parent_comment_id"]
+            isOneToOne: false
+            referencedRelation: "reading_discussions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reading_discussions_reading_portion_id_fkey"
+            columns: ["reading_portion_id"]
+            isOneToOne: false
+            referencedRelation: "reading_portions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reading_plans: {
+        Row: {
+          book_of_bible: string
+          community_id: string
+          created_at: string
+          created_by: string
+          description: string | null
+          end_date: string | null
+          id: string
+          start_date: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          book_of_bible: string
+          community_id: string
+          created_at?: string
+          created_by: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          start_date: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          book_of_bible?: string
+          community_id?: string
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          start_date?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reading_plans_community_id_fkey"
+            columns: ["community_id"]
+            isOneToOne: false
+            referencedRelation: "communities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reading_portions: {
+        Row: {
+          created_at: string
+          end_date: string
+          id: string
+          reading_plan_id: string
+          reading_text: string | null
+          reflection_questions: string[] | null
+          scripture_reference: string
+          start_date: string
+          title: string
+          week_number: number
+        }
+        Insert: {
+          created_at?: string
+          end_date: string
+          id?: string
+          reading_plan_id: string
+          reading_text?: string | null
+          reflection_questions?: string[] | null
+          scripture_reference: string
+          start_date: string
+          title: string
+          week_number: number
+        }
+        Update: {
+          created_at?: string
+          end_date?: string
+          id?: string
+          reading_plan_id?: string
+          reading_text?: string | null
+          reflection_questions?: string[] | null
+          scripture_reference?: string
+          start_date?: string
+          title?: string
+          week_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reading_portions_reading_plan_id_fkey"
+            columns: ["reading_plan_id"]
+            isOneToOne: false
+            referencedRelation: "reading_plans"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

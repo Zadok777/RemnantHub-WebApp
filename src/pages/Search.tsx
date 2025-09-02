@@ -101,10 +101,10 @@ const Search = () => {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-            Find Your Community
+            Find a Gathering
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Discover authentic house church communities in your area where believers gather for fellowship, teaching, and breaking bread together.
+            Discover authentic house church assemblies in your area where believers gather for fellowship, teaching, and breaking bread together.
           </p>
         </div>
 
