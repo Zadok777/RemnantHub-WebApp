@@ -50,10 +50,10 @@ const Search = () => {
   const getTrustLevelColor = (level: string) => {
     const lowerLevel = level.toLowerCase();
     switch (lowerLevel) {
-      case 'new': return 'bg-blue-100 text-blue-800';
-      case 'established': return 'bg-green-100 text-green-800';
-      case 'verified': return 'bg-primary/10 text-primary';
-      case 'endorsed': return 'bg-purple-100 text-purple-800';
+      case 'newly planted': return 'bg-blue-100 text-blue-800';
+      case 'growing': return 'bg-green-100 text-green-800';
+      case 'commended': return 'bg-primary/10 text-primary';
+      case 'affirmed': return 'bg-purple-100 text-purple-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
@@ -175,7 +175,7 @@ const Search = () => {
                 <div>
                   <h4 className="font-medium mb-3">Trust Level</h4>
                   <div className="space-y-2">
-                    {['New', 'Established', 'Verified', 'Endorsed'].map((level) => (
+                    {['Newly Planted', 'Growing', 'Commended', 'Affirmed'].map((level) => (
                       <div key={level} className="flex items-center space-x-2">
                         <Checkbox 
                           id={`trust-${level}`}

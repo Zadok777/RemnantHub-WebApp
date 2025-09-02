@@ -22,6 +22,8 @@ import {
 } from 'lucide-react';
 import MutualEdification from '@/components/community/MutualEdification';
 import ReadingPlan from '@/components/community/ReadingPlan';
+import AccountabilityPartners from '@/components/community/AccountabilityPartners';
+import PraiseReports from '@/components/community/PraiseReports';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useCommunities } from '@/hooks/useCommunities';
@@ -88,10 +90,10 @@ const Community = () => {
 
   const getTrustLevelColor = (level: string) => {
     switch (level) {
-      case 'New': return 'bg-blue-100 text-blue-800';
-      case 'Established': return 'bg-green-100 text-green-800';
-      case 'Verified': return 'bg-primary/10 text-primary';
-      case 'Endorsed': return 'bg-purple-100 text-purple-800';
+      case 'Newly Planted': return 'bg-blue-100 text-blue-800';
+      case 'Growing': return 'bg-green-100 text-green-800';
+      case 'Commended': return 'bg-primary/10 text-primary';
+      case 'Affirmed': return 'bg-purple-100 text-purple-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
@@ -163,7 +165,7 @@ const Community = () => {
           {/* Main Content */}
           <div className="lg:col-span-2">
             <Tabs defaultValue="about" className="space-y-6">
-              <TabsList className="grid w-full grid-cols-6">
+              <TabsList className="grid w-full grid-cols-8">
                 <TabsTrigger value="about">About</TabsTrigger>
                 <TabsTrigger value="leadership">Leadership</TabsTrigger>
                 <TabsTrigger value="edification">
@@ -175,6 +177,16 @@ const Community = () => {
                   <Book className="w-4 h-4 mr-1" />
                   <span className="hidden sm:inline">Reading Plans</span>
                   <span className="sm:hidden">Reading</span>
+                </TabsTrigger>
+                <TabsTrigger value="accountability">
+                  <Users className="w-4 h-4 mr-1" />
+                  <span className="hidden sm:inline">Accountability</span>
+                  <span className="sm:hidden">Partners</span>
+                </TabsTrigger>
+                <TabsTrigger value="praise">
+                  <Star className="w-4 h-4 mr-1" />
+                  <span className="hidden sm:inline">Praise Reports</span>
+                  <span className="sm:hidden">Praise</span>
                 </TabsTrigger>
                 <TabsTrigger value="photos">Photos</TabsTrigger>
                 <TabsTrigger value="location">Location</TabsTrigger>
@@ -264,6 +276,14 @@ const Community = () => {
                   communityId={community.id} 
                   isLeader={false} // TODO: Add logic to check if current user is leader
                 />
+              </TabsContent>
+
+              <TabsContent value="accountability">
+                <AccountabilityPartners communityId={community.id} />
+              </TabsContent>
+
+              <TabsContent value="praise">
+                <PraiseReports communityId={community.id} />
               </TabsContent>
 
               <TabsContent value="photos">
@@ -356,7 +376,7 @@ const Community = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                {community.trust_level === 'Verified' && (
+                {community.trust_level === 'Commended' && (
                   <div className="space-y-3">
                     <div className="flex items-center text-sm">
                       <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
@@ -372,7 +392,7 @@ const Community = () => {
                     </div>
                   </div>
                 )}
-                {community.trust_level === 'New' && (
+                {community.trust_level === 'Newly Planted' && (
                   <div className="space-y-3">
                     <div className="flex items-center text-sm">
                       <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>

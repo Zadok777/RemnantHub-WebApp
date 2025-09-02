@@ -19,7 +19,8 @@ import {
   AlertCircle,
   Hand,
   Search,
-  Trash2
+  Trash2,
+  Star
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -281,7 +282,24 @@ const PrayerRequests = () => {
           <TabsTrigger value="my-prayers">My Prayers</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="browse" className="space-y-6">
+          <TabsContent value="browse" className="space-y-6">
+            {/* Praise Reports Section */}
+            <Card className="bg-gradient-to-r from-amber-50 to-yellow-50 border-amber-200">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-amber-800">
+                  <Star className="h-5 w-5" />
+                  Praise Reports
+                </CardTitle>
+                <CardDescription>
+                  Rejoice with others as they share testimonies of God's faithfulness
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button variant="outline" className="border-amber-200 text-amber-800 hover:bg-amber-100">
+                  View All Praise Reports
+                </Button>
+              </CardContent>
+            </Card>
           <div className="flex flex-col lg:flex-row gap-4">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />

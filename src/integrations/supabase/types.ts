@@ -14,6 +14,76 @@ export type Database = {
   }
   public: {
     Tables: {
+      accountability_messages: {
+        Row: {
+          created_at: string
+          id: string
+          message_text: string
+          partnership_id: string
+          sender_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message_text: string
+          partnership_id: string
+          sender_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message_text?: string
+          partnership_id?: string
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accountability_messages_partnership_id_fkey"
+            columns: ["partnership_id"]
+            isOneToOne: false
+            referencedRelation: "accountability_partnerships"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      accountability_partnerships: {
+        Row: {
+          community_id: string
+          created_at: string
+          id: string
+          status: string
+          updated_at: string
+          user1_id: string
+          user2_id: string
+        }
+        Insert: {
+          community_id: string
+          created_at?: string
+          id?: string
+          status?: string
+          updated_at?: string
+          user1_id: string
+          user2_id: string
+        }
+        Update: {
+          community_id?: string
+          created_at?: string
+          id?: string
+          status?: string
+          updated_at?: string
+          user1_id?: string
+          user2_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accountability_partnerships_community_id_fkey"
+            columns: ["community_id"]
+            isOneToOne: false
+            referencedRelation: "communities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       communities: {
         Row: {
           contact_info: Json | null
@@ -156,6 +226,48 @@ export type Database = {
           },
         ]
       }
+      leader_verifications: {
+        Row: {
+          doctrinal_affirmation: string
+          id: string
+          notes: string | null
+          reference_contacts: string[]
+          reference_leaders: string[]
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          submitted_at: string
+          testimony_of_faith: string
+          user_id: string
+        }
+        Insert: {
+          doctrinal_affirmation: string
+          id?: string
+          notes?: string | null
+          reference_contacts: string[]
+          reference_leaders: string[]
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          submitted_at?: string
+          testimony_of_faith: string
+          user_id: string
+        }
+        Update: {
+          doctrinal_affirmation?: string
+          id?: string
+          notes?: string | null
+          reference_contacts?: string[]
+          reference_leaders?: string[]
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          submitted_at?: string
+          testimony_of_faith?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       member_gifts: {
         Row: {
           community_id: string
@@ -193,6 +305,54 @@ export type Database = {
             columns: ["community_id"]
             isOneToOne: false
             referencedRelation: "communities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      praise_reports: {
+        Row: {
+          community_id: string
+          created_at: string
+          description: string
+          id: string
+          prayer_request_id: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          community_id: string
+          created_at?: string
+          description: string
+          id?: string
+          prayer_request_id?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          community_id?: string
+          created_at?: string
+          description?: string
+          id?: string
+          prayer_request_id?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "praise_reports_community_id_fkey"
+            columns: ["community_id"]
+            isOneToOne: false
+            referencedRelation: "communities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "praise_reports_prayer_request_id_fkey"
+            columns: ["prayer_request_id"]
+            isOneToOne: false
+            referencedRelation: "prayer_requests"
             referencedColumns: ["id"]
           },
         ]

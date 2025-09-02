@@ -58,7 +58,7 @@ const CreateCommunity = () => {
         meeting_time: formData.meeting_time,
         max_capacity: formData.capacity ? parseInt(formData.capacity) : null,
         leader_id: user.id,
-        trust_level: 'New', // Default trust level for new communities
+        trust_level: 'Newly Planted', // Default trust level for new communities
         contact_info: {
           email: formData.contact_email,
           denomination: formData.denomination,
@@ -103,8 +103,19 @@ const CreateCommunity = () => {
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back
           </Button>
-          <h1 className="text-4xl font-bold text-foreground mb-2">Plant a House Church</h1>
-          <p className="text-muted-foreground">Share your ekklēsia gathering or fellowship with seekers in your area</p>
+          <h1 className="text-4xl font-bold text-foreground mb-4">Plant a House Church</h1>
+          <p className="text-lg text-muted-foreground max-w-2xl">
+            Join us in establishing intimate gatherings of believers following the New Testament model. 
+            Create a house church where authentic fellowship and mutual edification can flourish.
+          </p>
+          
+          <div className="mt-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+            <h3 className="font-semibold text-amber-800 mb-2">Leader Commendation Required</h3>
+            <p className="text-sm text-amber-700">
+              According to 1 Timothy 3 standards, house church leaders must be commended through our verification process. 
+              This ensures biblical qualifications for those who would shepherd God's people.
+            </p>
+          </div>
         </div>
 
         <div className="max-w-2xl mx-auto">

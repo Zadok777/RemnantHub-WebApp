@@ -17,7 +17,7 @@ export interface Community {
   members: number;
   meetingTime: string;
   meetingDay: string;
-  trustLevel: 'New' | 'Established' | 'Verified' | 'Endorsed';
+  trustLevel: 'Newly Planted' | 'Growing' | 'Commended' | 'Affirmed';
   tags: string[];
   photos: string[];
   founded: string;
@@ -46,7 +46,7 @@ export const mockCommunities: Community[] = [
     members: 18,
     meetingTime: '10:00 AM',
     meetingDay: 'Sunday',
-    trustLevel: 'Verified',
+    trustLevel: 'Commended',
     tags: ['Family-friendly', 'Bible Study', 'Prayer', 'Fellowship Meals'],
     photos: ['/api/placeholder/400/300', '/api/placeholder/400/300'],
     founded: '2019',
@@ -73,7 +73,7 @@ export const mockCommunities: Community[] = [
     members: 12,
     meetingTime: '6:00 PM',
     meetingDay: 'Sunday',
-    trustLevel: 'Established',
+    trustLevel: 'Growing',
     tags: ['Bible Study', 'Discipleship', 'Worship', 'Children\'s Ministry'],
     photos: ['/api/placeholder/400/300'],
     founded: '2021',
@@ -100,7 +100,7 @@ export const mockCommunities: Community[] = [
     members: 25,
     meetingTime: '7:00 PM',
     meetingDay: 'Wednesday',
-    trustLevel: 'New',
+    trustLevel: 'Newly Planted',
     tags: ['Young Adults', 'Contemporary Worship', 'Social Justice', 'Community Service'],
     photos: ['/api/placeholder/400/300', '/api/placeholder/400/300'],
     founded: '2023',
@@ -127,7 +127,7 @@ export const mockCommunities: Community[] = [
     members: 15,
     meetingTime: '9:00 AM',
     meetingDay: 'Sunday',
-    trustLevel: 'Endorsed',
+    trustLevel: 'Affirmed',
     tags: ['Traditional Worship', 'Liturgical', 'Sacraments', 'Historical Christianity'],
     photos: ['/api/placeholder/400/300'],
     founded: '2017',
