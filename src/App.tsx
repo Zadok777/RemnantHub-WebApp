@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -29,24 +28,27 @@ import ResourceLibrary from "./pages/ResourceLibrary";
 import RestorationProcess from "./pages/RestorationProcess";
 import NotFound from "./pages/NotFound";
 
-const App = () => {
-  // Create QueryClient inside the component to avoid issues with React refresh
-  const [queryClient] = useState(() => new QueryClient({
-    defaultOptions: {
-      queries: {
-        staleTime: 1000 * 60 * 5, // 5 minutes
-        refetchOnWindowFocus: false,
-      },
+// Create QueryClient with proper configuration and error handling
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      refetchOnWindowFocus: false,
+      retry: 3,
+      retryOnMount: true,
     },
-  }));
+    mutations: {
+      retry: 1,
+    },
+  },
+});
 
+function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <ThemeProvider>
           <AuthProvider>
-            <Toaster />
-            <Sonner />
             <BrowserRouter>
               <Layout>
                 <Routes>
@@ -75,12 +77,14 @@ const App = () => {
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </Layout>
+              <Toaster />
+              <Sonner />
             </BrowserRouter>
           </AuthProvider>
         </ThemeProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );
-};
+}
 
 export default App;
