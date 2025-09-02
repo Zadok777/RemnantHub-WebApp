@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -28,48 +29,58 @@ import ResourceLibrary from "./pages/ResourceLibrary";
 import RestorationProcess from "./pages/RestorationProcess";
 import NotFound from "./pages/NotFound";
 
-const queryClient = new QueryClient();
+const App = () => {
+  // Create QueryClient inside the component to avoid issues with React refresh
+  const [queryClient] = useState(() => new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 1000 * 60 * 5, // 5 minutes
+        refetchOnWindowFocus: false,
+      },
+    },
+  }));
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <ThemeProvider>
-        <AuthProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Layout>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/search" element={<Search />} />
-              <Route path="/features" element={<Features />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/donate" element={<Donate />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/create-community" element={<CreateCommunity />} />
-              <Route path="/community/:id" element={<Community />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/signin" element={<Auth />} />
-              <Route path="/signup" element={<Auth />} />
-              <Route path="/prayers" element={<PrayerRequests />} />
-              <Route path="/faq" element={<FAQ />} />
-              <Route path="/privacy" element={<PrivacyPolicy />} />
-              <Route path="/terms" element={<TermsOfService />} />
-              <Route path="/cookies" element={<CookiePolicy />} />
-              <Route path="/data-rights" element={<DataRights />} />
-              <Route path="/report" element={<ReportContent />} />
-              <Route path="/community-guidelines" element={<CommunityGuidelines />} />
-              <Route path="/regional-networks" element={<RegionalNetworks />} />
-              <Route path="/resources" element={<ResourceLibrary />} />
-              <Route path="/restoration-process" element={<RestorationProcess />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-            </Layout>
-          </BrowserRouter>
-        </AuthProvider>
-      </ThemeProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Layout>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/search" element={<Search />} />
+                  <Route path="/features" element={<Features />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/donate" element={<Donate />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/create-community" element={<CreateCommunity />} />
+                  <Route path="/community/:id" element={<Community />} />
+                  <Route path="/auth" element={<Auth />} />
+                  <Route path="/signin" element={<Auth />} />
+                  <Route path="/signup" element={<Auth />} />
+                  <Route path="/prayers" element={<PrayerRequests />} />
+                  <Route path="/faq" element={<FAQ />} />
+                  <Route path="/privacy" element={<PrivacyPolicy />} />
+                  <Route path="/terms" element={<TermsOfService />} />
+                  <Route path="/cookies" element={<CookiePolicy />} />
+                  <Route path="/data-rights" element={<DataRights />} />
+                  <Route path="/report" element={<ReportContent />} />
+                  <Route path="/community-guidelines" element={<CommunityGuidelines />} />
+                  <Route path="/regional-networks" element={<RegionalNetworks />} />
+                  <Route path="/resources" element={<ResourceLibrary />} />
+                  <Route path="/restoration-process" element={<RestorationProcess />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Layout>
+            </BrowserRouter>
+          </AuthProvider>
+        </ThemeProvider>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
