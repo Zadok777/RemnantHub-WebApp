@@ -18,7 +18,7 @@ const About = () => {
     {
       icon: Heart,
       title: 'Authentic Fellowship',
-      description: 'We believe in genuine, Christ-centered relationships that go beyond Sunday services.',
+      description: 'We believe in genuine, Christ-centered relationships that go beyond Sunday gatherings.',
     },
     {
       icon: BookOpen,
@@ -67,8 +67,9 @@ const About = () => {
             Our Story & Mission
           </h1>
           <p className="text-xl text-muted-foreground mb-8">
-            RemnantHub was born from a simple truth: authentic Christian fellowship happens best 
-            in intimate, home-based communities where believers can truly know and be known.
+            RemnantHub exists to connect believers in house churches modeled on the New Testament 
+            ekklēsia, where authentic Christian fellowship happens through intimate gatherings 
+            where believers can truly know and be known.
           </p>
           <div className="divine-text mb-8">
             "And let us consider how to stir up one another to love and good works, 
@@ -90,17 +91,23 @@ const About = () => {
               <div className="space-y-4 text-lg text-muted-foreground">
                 <p>
                   In our increasingly disconnected world, many believers are longing for deeper, 
-                  more authentic community. Yet finding the right house church can feel impossible.
+                  more authentic community. Yet finding the right house church assembly can feel impossible.
                 </p>
                 <p>
-                  We've seen too many people drift from church to church, never finding their 
+                  We've seen too many people drift from gathering to gathering, never finding their 
                   spiritual family. Too many house churches remain isolated, missing opportunities 
                   to connect with seekers who share their values.
                 </p>
                 <p>
+                  <strong>Ekklēsia</strong> (ἐκκλησία) literally means "called out ones" - those summoned together 
+                  for a purpose. <strong>Koinōnia</strong> (κοινωνία) speaks of deep fellowship, sharing life 
+                  together in Christ. Our goal is discipleship and participatory fellowship rather than 
+                  consumer church attendance.
+                </p>
+                <p>
                   RemnantHub bridges this gap, creating trusted connections between believers 
                   and communities that prioritize intimate fellowship, biblical teaching, 
-                  and genuine discipleship.
+                  and genuine discipleship modeled after Acts 2:41–47 and Acts 5:42.
                 </p>
               </div>
             </div>
@@ -109,9 +116,9 @@ const About = () => {
                 <Target className="w-16 h-16 text-primary mx-auto mb-6" />
                 <h3 className="text-2xl font-bold text-foreground mb-4">Our Mission</h3>
                 <p className="text-lg text-muted-foreground">
-                  To connect believers with authentic house church communities where they can 
-                  experience the New Testament model of fellowship, teaching, breaking bread, 
-                  and prayer together.
+                  To connect believers with authentic house church assemblies where they can 
+                  experience the New Testament ekklēsia model of fellowship, teaching, breaking bread, 
+                  and prayer together as described in Acts 2:41–47 and Acts 5:42.
                 </p>
               </div>
             </div>
