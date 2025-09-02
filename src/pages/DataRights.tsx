@@ -15,6 +15,95 @@ const DataRights = () => {
       <div className="space-y-6">
         <Card>
           <CardHeader>
+            <CardTitle>Data We Collect</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <h3 className="text-lg font-medium mb-2">Account Information</h3>
+              <ul className="list-disc list-inside space-y-1 text-muted-foreground">
+                <li>Email address (for authentication)</li>
+                <li>Display name (optional)</li>
+                <li>Profile picture (optional)</li>
+                <li>Location information (city/state for community discovery)</li>
+                <li>Bio and personal testimony (optional)</li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="text-lg font-medium mb-2">Community & Spiritual Data</h3>
+              <ul className="list-disc list-inside space-y-1 text-muted-foreground">
+                <li>Prayer requests and responses</li>
+                <li>Praise reports and testimonies</li>
+                <li>Community memberships and roles</li>
+                <li>Messages and interactions within communities</li>
+                <li>Spiritual gifts and availability (optional)</li>
+                <li>Reading plan participation and discussions</li>
+                <li>Accountability partnership messages (private)</li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-medium mb-2">Leadership & Network Data</h3>
+              <ul className="list-disc list-inside space-y-1 text-muted-foreground">
+                <li>Leader verification submissions and references</li>
+                <li>Regional network memberships and discussions</li>
+                <li>Community multiplication milestones</li>
+                <li>Network event participation</li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-medium mb-2">Privacy Preferences</h3>
+              <ul className="list-disc list-inside space-y-1 text-muted-foreground">
+                <li>Location sharing preferences</li>
+                <li>Testimony visibility settings</li>
+                <li>Meeting address disclosure preferences</li>
+              </ul>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>How We Use Your Data</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <h3 className="text-lg font-medium mb-2">Core Platform Functions</h3>
+              <ul className="list-disc list-inside space-y-1 text-muted-foreground">
+                <li>Connecting you with local house church communities</li>
+                <li>Facilitating prayer requests and spiritual support</li>
+                <li>Enabling secure communication between members</li>
+                <li>Managing community memberships and roles</li>
+                <li>Supporting accountability partnerships and spiritual growth</li>
+                <li>Coordinating reading plans and spiritual discussions</li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-medium mb-2">Community Building</h3>
+              <ul className="list-disc list-inside space-y-1 text-muted-foreground">
+                <li>Matching members based on spiritual gifts and availability</li>
+                <li>Facilitating regional networks and leadership connections</li>
+                <li>Supporting church multiplication and discipleship</li>
+                <li>Sharing testimonies and praise reports (with your consent)</li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="text-lg font-medium mb-2">Service Improvement</h3>
+              <ul className="list-disc list-inside space-y-1 text-muted-foreground">
+                <li>Analyzing usage patterns to improve the platform</li>
+                <li>Providing customer support</li>
+                <li>Preventing fraud and abuse</li>
+                <li>Ensuring leader verification and community safety</li>
+              </ul>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
             <CardTitle>Overview</CardTitle>
           </CardHeader>
           <CardContent>

@@ -309,6 +309,158 @@ export type Database = {
           },
         ]
       }
+      multiplication_milestones: {
+        Row: {
+          achieved_at: string | null
+          community_id: string
+          created_at: string
+          id: string
+          milestone_type: string
+          notes: string | null
+        }
+        Insert: {
+          achieved_at?: string | null
+          community_id: string
+          created_at?: string
+          id?: string
+          milestone_type: string
+          notes?: string | null
+        }
+        Update: {
+          achieved_at?: string | null
+          community_id?: string
+          created_at?: string
+          id?: string
+          milestone_type?: string
+          notes?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "multiplication_milestones_community_id_fkey"
+            columns: ["community_id"]
+            isOneToOne: false
+            referencedRelation: "communities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      network_discussions: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          network_id: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          network_id: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          network_id?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "network_discussions_network_id_fkey"
+            columns: ["network_id"]
+            isOneToOne: false
+            referencedRelation: "regional_networks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      network_events: {
+        Row: {
+          created_at: string
+          description: string | null
+          event_date: string
+          id: string
+          location: string | null
+          max_attendees: number | null
+          network_id: string
+          organizer_id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          event_date: string
+          id?: string
+          location?: string | null
+          max_attendees?: number | null
+          network_id: string
+          organizer_id: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          event_date?: string
+          id?: string
+          location?: string | null
+          max_attendees?: number | null
+          network_id?: string
+          organizer_id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "network_events_network_id_fkey"
+            columns: ["network_id"]
+            isOneToOne: false
+            referencedRelation: "regional_networks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      network_memberships: {
+        Row: {
+          id: string
+          joined_at: string
+          network_id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          joined_at?: string
+          network_id: string
+          role?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          joined_at?: string
+          network_id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "network_memberships_network_id_fkey"
+            columns: ["network_id"]
+            isOneToOne: false
+            referencedRelation: "regional_networks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       praise_reports: {
         Row: {
           community_id: string
@@ -438,6 +590,7 @@ export type Database = {
           location_lat: number | null
           location_lng: number | null
           location_state: string | null
+          privacy_settings: Json | null
           updated_at: string
           user_id: string
         }
@@ -452,6 +605,7 @@ export type Database = {
           location_lat?: number | null
           location_lng?: number | null
           location_state?: string | null
+          privacy_settings?: Json | null
           updated_at?: string
           user_id: string
         }
@@ -466,6 +620,7 @@ export type Database = {
           location_lat?: number | null
           location_lng?: number | null
           location_state?: string | null
+          privacy_settings?: Json | null
           updated_at?: string
           user_id?: string
         }
@@ -612,6 +767,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      regional_networks: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          leader_id: string
+          name: string
+          region_city: string | null
+          region_state: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          leader_id: string
+          name: string
+          region_city?: string | null
+          region_state: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          leader_id?: string
+          name?: string
+          region_city?: string | null
+          region_state?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
     }
     Views: {
