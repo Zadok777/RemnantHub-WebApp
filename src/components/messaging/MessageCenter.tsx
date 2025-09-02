@@ -20,6 +20,7 @@ import {
 import { useCommunities } from '@/hooks/useCommunities';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import GroupChat from './GroupChat';
 
 interface MessageCenterProps {
   defaultTab?: string;
@@ -74,8 +75,9 @@ const MessageCenter: React.FC<MessageCenterProps> = ({ defaultTab = 'conversatio
     <div className="h-[600px] bg-background rounded-lg border overflow-hidden">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
         <div className="border-b p-4">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="conversations">Messages</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="conversations">Direct</TabsTrigger>
+            <TabsTrigger value="groups">Group Chats</TabsTrigger>
             <TabsTrigger value="communities">Communities</TabsTrigger>
             <TabsTrigger value="compose">Compose</TabsTrigger>
           </TabsList>
@@ -239,6 +241,13 @@ const MessageCenter: React.FC<MessageCenterProps> = ({ defaultTab = 'conversatio
                 </div>
               )}
             </div>
+          </TabsContent>
+
+          <TabsContent value="groups" className="flex-1 m-0 h-full">
+            <GroupChat 
+              communityId={communities.length > 0 ? communities[0].id : undefined}
+              isLeader={false}
+            />
           </TabsContent>
 
           <TabsContent value="communities" className="flex-1 m-0 p-4 overflow-y-auto">

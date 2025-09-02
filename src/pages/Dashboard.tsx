@@ -12,6 +12,7 @@ import { Switch } from '@/components/ui/switch';
 import MessageCenter from '@/components/messaging/MessageCenter';
 import { SettingsManager } from '@/components/settings/SettingsManager';
 import { PhotoUpload } from '@/components/profile/PhotoUpload';
+import AnnouncementsSection from '@/components/dashboard/AnnouncementsSection';
 import { useCommunities } from '@/hooks/useCommunities';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -392,6 +393,12 @@ const Dashboard = () => {
                   </Button>
                 </CardContent>
               </Card>
+
+              {/* Announcements Section */}
+              <AnnouncementsSection 
+                isLeader={userCommunities.some(c => c.role && c.role === 'leader')}
+                communityIds={userCommunities.map(c => c.id)}
+              />
             </div>
           </TabsContent>
 

@@ -84,6 +84,83 @@ export type Database = {
           },
         ]
       }
+      announcement_reads: {
+        Row: {
+          announcement_id: string
+          id: string
+          read_at: string
+          user_id: string
+        }
+        Insert: {
+          announcement_id: string
+          id?: string
+          read_at?: string
+          user_id: string
+        }
+        Update: {
+          announcement_id?: string
+          id?: string
+          read_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "announcement_reads_announcement_id_fkey"
+            columns: ["announcement_id"]
+            isOneToOne: false
+            referencedRelation: "announcements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      announcements: {
+        Row: {
+          announcement_type: string
+          attachment_urls: string[] | null
+          community_id: string | null
+          content: string
+          created_at: string
+          created_by: string
+          expires_at: string | null
+          id: string
+          is_published: boolean
+          priority: string
+          regional_network_id: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          announcement_type: string
+          attachment_urls?: string[] | null
+          community_id?: string | null
+          content: string
+          created_at?: string
+          created_by: string
+          expires_at?: string | null
+          id?: string
+          is_published?: boolean
+          priority?: string
+          regional_network_id?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          announcement_type?: string
+          attachment_urls?: string[] | null
+          community_id?: string | null
+          content?: string
+          created_at?: string
+          created_by?: string
+          expires_at?: string | null
+          id?: string
+          is_published?: boolean
+          priority?: string
+          regional_network_id?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       communities: {
         Row: {
           contact_info: Json | null
@@ -272,6 +349,124 @@ export type Database = {
           is_predefined?: boolean | null
           name?: string
           summary?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      group_chat_members: {
+        Row: {
+          group_chat_id: string
+          id: string
+          joined_at: string
+          last_read_at: string | null
+          role: string
+          user_id: string
+        }
+        Insert: {
+          group_chat_id: string
+          id?: string
+          joined_at?: string
+          last_read_at?: string | null
+          role?: string
+          user_id: string
+        }
+        Update: {
+          group_chat_id?: string
+          id?: string
+          joined_at?: string
+          last_read_at?: string | null
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_chat_members_group_chat_id_fkey"
+            columns: ["group_chat_id"]
+            isOneToOne: false
+            referencedRelation: "group_chats"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      group_chat_messages: {
+        Row: {
+          attachment_url: string | null
+          created_at: string
+          group_chat_id: string
+          id: string
+          is_approved: boolean | null
+          message_text: string
+          message_type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          attachment_url?: string | null
+          created_at?: string
+          group_chat_id: string
+          id?: string
+          is_approved?: boolean | null
+          message_text: string
+          message_type?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          attachment_url?: string | null
+          created_at?: string
+          group_chat_id?: string
+          id?: string
+          is_approved?: boolean | null
+          message_text?: string
+          message_type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_chat_messages_group_chat_id_fkey"
+            columns: ["group_chat_id"]
+            isOneToOne: false
+            referencedRelation: "group_chats"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      group_chats: {
+        Row: {
+          chat_type: string
+          community_id: string | null
+          created_at: string
+          created_by: string
+          id: string
+          is_active: boolean
+          moderation_settings: Json | null
+          name: string
+          regional_network_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          chat_type: string
+          community_id?: string | null
+          created_at?: string
+          created_by: string
+          id?: string
+          is_active?: boolean
+          moderation_settings?: Json | null
+          name: string
+          regional_network_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          chat_type?: string
+          community_id?: string | null
+          created_at?: string
+          created_by?: string
+          id?: string
+          is_active?: boolean
+          moderation_settings?: Json | null
+          name?: string
+          regional_network_id?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -625,6 +820,39 @@ export type Database = {
           message?: string | null
           prayer_request_id?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      private_messages: {
+        Row: {
+          attachment_url: string | null
+          created_at: string
+          id: string
+          is_read: boolean
+          message_text: string
+          recipient_id: string
+          sender_id: string
+          updated_at: string
+        }
+        Insert: {
+          attachment_url?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message_text: string
+          recipient_id: string
+          sender_id: string
+          updated_at?: string
+        }
+        Update: {
+          attachment_url?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message_text?: string
+          recipient_id?: string
+          sender_id?: string
+          updated_at?: string
         }
         Relationships: []
       }
