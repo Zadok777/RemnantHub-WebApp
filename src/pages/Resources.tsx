@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
-import { ExternalLink, Search, X } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
@@ -24,30 +22,11 @@ interface Resource {
 const Resources = () => {
   const [resources, setResources] = useState<Resource[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [availableTags, setAvailableTags] = useState<string[]>([]);
   const { toast } = useToast();
-
-  const categories = [
-    "all",
-    "Gospels & Acts",
-    "Pauline & General Epistles", 
-    "Early Church Fathers",
-    "Theological Studies"
-  ];
 
   useEffect(() => {
     fetchResources();
   }, []);
-
-  useEffect(() => {
-    // Extract unique tags from all resources
-    const allTags = resources.flatMap(resource => resource.tags || []);
-    const uniqueTags = [...new Set(allTags)].sort();
-    setAvailableTags(uniqueTags);
-  }, [resources]);
 
   const fetchResources = async () => {
     try {
@@ -67,37 +46,6 @@ const Resources = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const filteredResources = resources.filter(resource => {
-    // Category filter
-    const categoryMatch = selectedCategory === "all" || resource.category === selectedCategory;
-    
-    // Search filter (title, author, tags)
-    const searchMatch = !searchQuery || 
-      resource.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      resource.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      resource.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-    
-    // Tag filter
-    const tagMatch = selectedTags.length === 0 || 
-      selectedTags.some(selectedTag => resource.tags.includes(selectedTag));
-    
-    return categoryMatch && searchMatch && tagMatch;
-  });
-
-  const toggleTag = (tag: string) => {
-    setSelectedTags(prev => 
-      prev.includes(tag) 
-        ? prev.filter(t => t !== tag)
-        : [...prev, tag]
-    );
-  };
-
-  const clearFilters = () => {
-    setSearchQuery("");
-    setSelectedTags([]);
-    setSelectedCategory("all");
   };
 
   const getIcon = (iconName: string) => {
@@ -128,98 +76,19 @@ const Resources = () => {
         </p>
       </div>
 
-      {/* Search and Filters */}
-      <div className="mb-8 space-y-6">
-        {/* Search Bar */}
-        <div className="relative max-w-md">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-          <Input
-            placeholder="Search by title, author, or tags..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-
-        {/* Category Filter */}
-        <div>
-          <h3 className="text-sm font-medium text-foreground mb-3">Categories</h3>
-          <div className="flex flex-wrap gap-2">
-            {categories.map((category) => (
-              <Button
-                key={category}
-                variant={selectedCategory === category ? "default" : "outline"}
-                size="sm"
-                onClick={() => setSelectedCategory(category)}
-                className="capitalize"
-              >
-                {category === "all" ? "All Categories" : category}
-              </Button>
-            ))}
-          </div>
-        </div>
-
-        {/* Tag Filter */}
-        {availableTags.length > 0 && (
-          <div>
-            <h3 className="text-sm font-medium text-foreground mb-3">Tags</h3>
-            <div className="flex flex-wrap gap-2">
-              {availableTags.map((tag) => (
-                <Badge
-                  key={tag}
-                  variant={selectedTags.includes(tag) ? "default" : "outline"}
-                  className="cursor-pointer hover:bg-primary/20 transition-colors"
-                  onClick={() => toggleTag(tag)}
-                >
-                  {tag}
-                  {selectedTags.includes(tag) && (
-                    <X className="ml-1 h-3 w-3" />
-                  )}
-                </Badge>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Active Filters & Clear */}
-        {(searchQuery || selectedTags.length > 0 || selectedCategory !== "all") && (
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">Active filters:</span>
-            {searchQuery && (
-              <Badge variant="secondary">
-                Search: "{searchQuery}"
-              </Badge>
-            )}
-            {selectedCategory !== "all" && (
-              <Badge variant="secondary">
-                Category: {selectedCategory}
-              </Badge>
-            )}
-            {selectedTags.map(tag => (
-              <Badge key={tag} variant="secondary">
-                Tag: {tag}
-              </Badge>
-            ))}
-            <Button variant="ghost" size="sm" onClick={clearFilters}>
-              Clear all
-            </Button>
-          </div>
-        )}
-      </div>
-
       {/* Resources Grid */}
       <div className="mb-4">
         <p className="text-sm text-muted-foreground">
-          Showing {filteredResources.length} of {resources.length} resources
+          Showing {resources.length} resources
         </p>
       </div>
-      {filteredResources.length === 0 ? (
+      {resources.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-muted-foreground text-lg">No resources found for the selected category.</p>
+          <p className="text-muted-foreground text-lg">No resources available.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredResources.map((resource) => {
+          {resources.map((resource) => {
             const IconComponent = getIcon(resource.icon);
             
             return (
@@ -228,30 +97,6 @@ const Resources = () => {
                   <div className="flex items-start gap-3 mb-3">
                     <div className="p-2 bg-primary/10 rounded-lg">
                       <IconComponent className="h-6 w-6 text-primary" />
-                    </div>
-                    <div className="flex-1 space-y-2">
-                      <div className="flex flex-wrap gap-1">
-                        <Badge 
-                          variant="default" 
-                          className="text-xs font-medium"
-                        >
-                          {resource.category}
-                        </Badge>
-                        {resource.tags.slice(0, 2).map((tag, index) => (
-                          <Badge 
-                            key={tag} 
-                            variant="secondary"
-                            className="text-xs"
-                          >
-                            {tag}
-                          </Badge>
-                        ))}
-                        {resource.tags.length > 2 && (
-                          <Badge variant="outline" className="text-xs">
-                            +{resource.tags.length - 2}
-                          </Badge>
-                        )}
-                      </div>
                     </div>
                   </div>
                   <CardTitle className="line-clamp-2 text-lg leading-tight">{resource.title}</CardTitle>
@@ -263,23 +108,6 @@ const Resources = () => {
                   <p className="text-sm text-muted-foreground mb-6 flex-1 leading-relaxed">
                     {resource.summary}
                   </p>
-                  
-                  {/* All Tags Display */}
-                  {resource.tags.length > 0 && (
-                    <div className="mb-6">
-                      <div className="flex flex-wrap gap-1">
-                        {resource.tags.map((tag) => (
-                          <Badge 
-                            key={tag} 
-                            variant="outline" 
-                            className="text-xs hover:bg-primary/10 transition-colors"
-                          >
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  )}
 
                   {/* Read More Button */}
                   <Button asChild className="w-full mt-auto group">
