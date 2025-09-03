@@ -88,7 +88,7 @@ const Dashboard = () => {
       loadProfile();
       loadUserCommunities(user.id);
     }
-  }, [user, loadUserCommunities]);
+  }, [user]);
 
   const loadProfile = async () => {
     if (!user?.id) {
