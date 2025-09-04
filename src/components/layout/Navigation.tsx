@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Home, Search, Zap, Info, Heart, User, UserPlus, LogOut, Settings, BookOpen } from 'lucide-react';
+import { Menu, X, Home, Search, Zap, Info, Heart, User, UserPlus, LogOut, Settings } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -14,7 +14,6 @@ const Navigation = () => {
     { name: 'Home', href: '/', icon: Home },
     { name: 'Find a Gathering', href: '/search', icon: Search },
     { name: 'Prayer', href: '/prayers', icon: Heart },
-    { name: 'Resources', href: '/resources', icon: BookOpen },
     { name: 'Features', href: '/features', icon: Zap },
     { name: 'About', href: '/about', icon: Info },
     { name: 'Donate', href: '/donate', icon: Heart },

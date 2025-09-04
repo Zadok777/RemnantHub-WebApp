@@ -25,7 +25,6 @@ import ReportContent from "./pages/ReportContent";
 import CommunityGuidelines from "./pages/CommunityGuidelines";
 import RegionalNetworks from "./pages/RegionalNetworks";
 import ResourceLibrary from "./pages/ResourceLibrary";
-import Resources from "./pages/Resources";
 import RestorationProcess from "./pages/RestorationProcess";
 import NotFound from "./pages/NotFound";
 
@@ -74,7 +73,6 @@ function App() {
                   <Route path="/community-guidelines" element={<CommunityGuidelines />} />
                   <Route path="/regional-networks" element={<RegionalNetworks />} />
                   <Route path="/resource-library" element={<ResourceLibrary />} />
-                  <Route path="/resources" element={<Resources />} />
                   <Route path="/restoration-process" element={<RestorationProcess />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
